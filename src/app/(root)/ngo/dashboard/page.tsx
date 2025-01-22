@@ -31,7 +31,7 @@ import { donations, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/server/auth";
 import { format } from "date-fns";
-import { updateDonationStatus } from "@/server/ngo/actions";
+import { fetchStats, updateDonationStatus } from "@/server/ngo/actions";
 import ActionDropdown from "@/components/ActionDropdown";
 // import { format } from "date-fns";
 
@@ -113,6 +113,8 @@ const NgoDonationRequest = async () => {
     .innerJoin(users, eq(donations.userId, users.id))
     .where(eq(donations.ngoId, session?.user?.id));
 
+  const stats = await fetchStats(session?.user?.id ?? "");
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto max-w-7xl px-4 py-8">
@@ -142,10 +144,29 @@ const NgoDonationRequest = async () => {
                         {stat.change}
                       </span>
                     </div>
-                    <div className={`rounded-full p-3 bg-${stat.variant}-100`}>
-                      <stat.icon
-                        className={`h-5 w-5 text-${stat.variant}-600`}
-                      />
+                    <div
+                      className={`rounded-full p-3 ${
+                        stat.title === "Total Donations"
+                          ? "bg-blue-100"
+                          : stat.title === "Active Disposals"
+                            ? "bg-purple-100"
+                            : stat.title === "Reward Points"
+                              ? "bg-emerald-100"
+                              : "bg-yellow-100"
+                      }`}
+                    >
+                      {stat.title === "Total Donations" && (
+                        <Package className="h-5 w-5 text-blue-600" />
+                      )}
+                      {stat.title === "Active Disposals" && (
+                        <Recycle className="h-5 w-5 text-purple-600" />
+                      )}
+                      {stat.title === "Reward Points" && (
+                        <Award className="h-5 w-5 text-emerald-600" />
+                      )}
+                      {stat.title === "Monthly Impact" && (
+                        <TrendingUp className="h-5 w-5 text-yellow-600" />
+                      )}
                     </div>
                   </div>
                 </CardContent>

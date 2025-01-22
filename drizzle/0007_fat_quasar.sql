@@ -1,0 +1,1 @@
+ALTER TABLE "wardrobe-care_user" ADD COLUMN "reward_points" integer DEFAULT 0;

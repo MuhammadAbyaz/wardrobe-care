@@ -26,6 +26,7 @@ import { donations, ngo, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/server/auth";
 import { format } from "date-fns";
+import { fetchStats } from "@/server/donation/actions";
 
 // interface DonationData {
 //   id: string;
@@ -184,6 +185,7 @@ const DonationHistory = async () => {
     .select({
       id: donations.id,
       createdAt: donations.createdAt,
+      quantity: donations.quantity,
       donationType: donations.donationType,
       item: donations.item,
       status: donations.status,
@@ -192,6 +194,8 @@ const DonationHistory = async () => {
     .from(donations)
     .innerJoin(users, eq(donations.ngoId, users.id))
     .where(eq(donations.userId, session?.user?.id));
+
+  const stats = await fetchStats(session?.user?.id ?? "");
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto max-w-7xl px-4 py-8">
@@ -228,10 +232,19 @@ const DonationHistory = async () => {
                         {stat.change}
                       </span>
                     </div>
-                    <div className={`rounded-full p-3 bg-${stat.variant}-100`}>
-                      <stat.icon
-                        className={`h-5 w-5 text-${stat.variant}-600`}
-                      />
+                    <div className="rounded-full p-3">
+                      {stat.title === "Total Donations" && (
+                        <Package className="h-5 w-5 text-blue-600" />
+                      )}
+                      {stat.title === "Active Disposals" && (
+                        <Recycle className="h-5 w-5 text-purple-600" />
+                      )}
+                      {stat.title === "Reward Points" && (
+                        <Award className="h-5 w-5 text-emerald-600" />
+                      )}
+                      {stat.title === "Monthly Impact" && (
+                        <TrendingUp className="h-5 w-5 text-yellow-600" />
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -265,7 +278,7 @@ const DonationHistory = async () => {
                         <TableHead>NGO/Service</TableHead>
                         <TableHead>Items</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Method</TableHead>
+                        <TableHead>Quantity</TableHead>
                         <TableHead>Points</TableHead>
                         <TableHead>Rewards</TableHead>
                       </TableRow>
@@ -309,7 +322,7 @@ const DonationHistory = async () => {
                           </TableCell>
                           <TableCell>
                             <span className="font-semibold text-emerald-600">
-                              100
+                              {data.quantity}
                             </span>
                           </TableCell>
                           <TableCell>
