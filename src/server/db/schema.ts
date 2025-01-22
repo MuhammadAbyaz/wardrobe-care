@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   text,
@@ -18,6 +19,7 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `wardrobe-care_${name}`);
 
+export const ROLE = pgEnum("role", ["USER", "ADMIN", "NGO"]);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
@@ -26,6 +28,8 @@ export const users = createTable("user", {
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }),
+  role: ROLE("role").default("USER"),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,
