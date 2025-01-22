@@ -5,7 +5,6 @@ import { signIn, signOut } from ".";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { hash } from "bcryptjs";
-import { redirect } from "next/navigation";
 
 export const signInAction = async () => {
   await signIn("google", { redirectTo: "/user" });

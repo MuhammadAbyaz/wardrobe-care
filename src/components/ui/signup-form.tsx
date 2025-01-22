@@ -75,13 +75,14 @@ export function SignupForm() {
   const onNGOSubmit = async (formValues: z.infer<typeof NGOSignUpSchema>) => {
     const res = await ngoSignUp(formValues);
     if (res.error) {
+      console.log(res.error);
       toast({
         title: "Error Occurred",
         variant: "destructive",
         description: "error",
       });
     } else {
-      redirect("/");
+      redirect("/ngo");
     }
   };
   return (
