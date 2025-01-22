@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,12 +25,14 @@ import {
   CardTitle,
   CardFooter,
 } from "./card";
-import { ngoSignUp, signUp } from "@/server/auth/actions";
+import { ngoSignUp, signInAction, signUp } from "@/server/auth/actions";
 import { redirect } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { RoundSpinner } from "./spinner";
 
 export function SignupForm() {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -52,17 +54,17 @@ export function SignupForm() {
     },
   });
   const onSubmit = async (formValues: z.infer<typeof signUpSchema>) => {
+    setLoading(true);
     const res = await signUp(formValues);
-    console.log(res);
     if (res.success && res.user?.role === "USER") {
+      setLoading(false);
       redirect("/");
     } else if (res.success && res.user?.role === "ADMIN") {
+      setLoading(false);
       console.log("Admin Spotted");
       return;
-    } else if (res.success && res.user?.role === "NGO") {
-      console.log("NGO spotted");
-      return;
     } else {
+      setLoading(false);
       toast({
         title: "Error Occurred",
         variant: "destructive",
@@ -71,16 +73,17 @@ export function SignupForm() {
   };
 
   const onNGOSubmit = async (formValues: z.infer<typeof NGOSignUpSchema>) => {
+    setLoading(true);
     const res = await ngoSignUp(formValues);
     if (res.error) {
-      console.log(res.error);
+      setLoading(false);
       toast({
         title: "Error Occurred",
         variant: "destructive",
         description: "error",
       });
     } else {
-      //   console.log("redirecting");
+      setLoading(false);
       redirect("/ngo");
     }
   };
@@ -112,7 +115,7 @@ export function SignupForm() {
                     variant="outline"
                     type="button"
                     className="mt-3 w-full"
-                    onClick={() => console.log("Google Sign in")}
+                    onClick={signInAction}
                   >
                     <Icons.google className="mr-2 size-4" />
                     Google
@@ -171,8 +174,16 @@ export function SignupForm() {
                           </FormItem>
                         )}
                       />
-                      <Button className="w-full text-white" type="submit">
-                        Sign up &rarr;
+                      <Button
+                        className="w-full text-white"
+                        type="submit"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <RoundSpinner color="white" />
+                        ) : (
+                          <>Sign up &rarr;</>
+                        )}
                       </Button>
                     </form>
                   </Form>
@@ -262,8 +273,16 @@ export function SignupForm() {
                           </FormItem>
                         )}
                       />
-                      <Button className="w-full text-white" type="submit">
-                        Sign up &rarr;
+                      <Button
+                        className="w-full text-white"
+                        type="submit"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <RoundSpinner color="white" />
+                        ) : (
+                          <>Sign up &rarr;</>
+                        )}
                       </Button>
                     </form>
                   </Form>

@@ -2,7 +2,6 @@ import React from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -27,125 +26,6 @@ import { eq } from "drizzle-orm";
 import { auth } from "@/server/auth";
 import { format } from "date-fns";
 
-// interface DonationData {
-//   id: string;
-//   date: string;
-//   type: "Donation" | "Disposal";
-//   ngoName?: string;
-//   items: string;
-//   quantity: number;
-//   status:
-//     | "Pending"
-//     | "Scheduled"
-//     | "Picked Up"
-//     | "In Transit"
-//     | "Delivered"
-//     | "Completed";
-//   method: "Pickup" | "Drop-off";
-//   scheduledDate: string;
-//   rewardPoints: number;
-//   vouchers?: string;
-// }
-
-// const donationData: DonationData[] = [
-//   {
-//     id: "DON-2024-001",
-//     date: "2024-03-15",
-//     type: "Donation",
-//     ngoName: "GreenEarth Foundation",
-//     items: "Winter Clothing Bundle",
-//     quantity: 5,
-//     status: "Delivered",
-//     method: "Pickup",
-//     scheduledDate: "2024-03-14",
-//     rewardPoints: 500,
-//     vouchers: "20% off at H&M",
-//   },
-//   {
-//     id: "DIS-2024-001",
-//     date: "2024-03-12",
-//     type: "Disposal",
-//     items: "Damaged Textiles",
-//     quantity: 3,
-//     status: "Completed",
-//     method: "Pickup",
-//     scheduledDate: "2024-03-11",
-//     rewardPoints: 150,
-//   },
-//   {
-//     id: "DON-2024-002",
-//     date: "2024-03-10",
-//     type: "Donation",
-//     ngoName: "Care & Share",
-//     items: "Children's Clothes",
-//     quantity: 8,
-//     status: "In Transit",
-//     method: "Drop-off",
-//     scheduledDate: "2024-03-09",
-//     rewardPoints: 800,
-//     vouchers: "₹500 off at FirstCry",
-//   },
-//   {
-//     id: "DON-2024-003",
-//     date: "2024-03-05",
-//     type: "Donation",
-//     ngoName: "Hope Foundation",
-//     items: "Summer Collection",
-//     quantity: 12,
-//     status: "Delivered",
-//     method: "Pickup",
-//     scheduledDate: "2024-03-04",
-//     rewardPoints: 1200,
-//     vouchers: "15% off at Zara",
-//   },
-//   {
-//     id: "DIS-2024-002",
-//     date: "2024-03-02",
-//     type: "Disposal",
-//     items: "Old Shoes & Bags",
-//     quantity: 4,
-//     status: "Completed",
-//     method: "Drop-off",
-//     scheduledDate: "2024-03-01",
-//     rewardPoints: 200,
-//   },
-//   {
-//     id: "DON-2024-004",
-//     date: "2024-02-28",
-//     type: "Donation",
-//     ngoName: "Helping Hands",
-//     items: "Professional Attire",
-//     quantity: 6,
-//     status: "Delivered",
-//     method: "Pickup",
-//     scheduledDate: "2024-02-27",
-//     rewardPoints: 600,
-//     vouchers: "₹1000 off at Marks & Spencer",
-//   },
-//   {
-//     id: "DON-2024-005",
-//     date: "2024-02-25",
-//     type: "Donation",
-//     ngoName: "Second Chance",
-//     items: "Kids Accessories",
-//     quantity: 10,
-//     status: "Pending",
-//     method: "Drop-off",
-//     scheduledDate: "2024-03-20",
-//     rewardPoints: 300,
-//   },
-//   {
-//     id: "DIS-2024-003",
-//     date: "2024-02-20",
-//     type: "Disposal",
-//     items: "Worn Out Clothes",
-//     quantity: 7,
-//     status: "Scheduled",
-//     method: "Pickup",
-//     scheduledDate: "2024-03-22",
-//     rewardPoints: 175,
-//   },
-// ];
 
 const stats = [
   {
