@@ -3,7 +3,7 @@
 import { and, eq } from "drizzle-orm";
 import { signIn, signOut } from ".";
 import { db } from "../db";
-import { users } from "../db/schema";
+import { userNgo, users } from "../db/schema";
 import { hash } from "bcryptjs";
 
 export const signInAction = async () => {
@@ -74,12 +74,7 @@ export const ngoSignUp = async (params: NGOAuthCreds) => {
   const existingUser = await db
     .select()
     .from(users)
-    .where(
-      and(
-        eq(users.email, email),
-        eq(users.registrationNumber, registrationnumber),
-      ),
-    )
+    .where(and(eq(users.email, email)))
     .limit(1);
   if (existingUser.length > 0) {
     return { success: false, error: "NGO already exists" };
@@ -88,19 +83,30 @@ export const ngoSignUp = async (params: NGOAuthCreds) => {
   const hashedPassword = await hash(password, 10);
 
   try {
-    const ngo = await db
+    const user = await db
       .insert(users)
       .values({
         name: orgname,
         email,
         password: hashedPassword,
         role,
-        registrationNumber: registrationnumber,
       })
       .returning();
-
+    if (user.length === 0 || !user[0]) {
+      return { success: false, error: "User creation failed" };
+    }
+    const ngoUser = await db
+      .insert(userNgo)
+      .values({
+        regId: registrationnumber,
+        userId: user[0].id,
+      })
+      .returning();
+    if (ngoUser.length === 0 || !ngoUser[0]) {
+      return { success: false, error: "NGO creation failed" };
+    }
     await signInWithCreds({ email, password });
-    return { success: true, user: ngo[0] };
+    return { success: true, user: ngoUser[0] };
   } catch (error) {
     console.log(error, "Sign up error");
     return { success: false, error: "Sign up error" };

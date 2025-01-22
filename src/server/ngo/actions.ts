@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { auth } from "../auth";
 import { db } from "../db";
-import { users, wardrobeCareNgo } from "../db/schema";
+import { ngo, userNgo } from "../db/schema";
 
 export const ngoRegistration = async (data) => {
   const session = await auth();
@@ -12,12 +12,13 @@ export const ngoRegistration = async (data) => {
   }
   const ngoArr = await db
     .select()
-    .from(users)
-    .where(eq(users.id, session?.user.id.toString()))
+    .from(userNgo)
+    .where(eq(userNgo.userId, session?.user.id.toString()))
     .limit(1);
-  const regNumber = ngoArr[0]?.registrationNumber as string;
+
+  const regNumber = ngoArr[0]?.regId;
   return await db
-    .insert(wardrobeCareNgo)
+    .insert(ngo)
     .values({
       contactPerson: data.contactPerson,
       headOfficeAddress: data.headOfficeAddress,

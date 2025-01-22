@@ -5,71 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1737526974503,
-      "tag": "0000_new_ravenous",
+      "when": 1737566124084,
+      "tag": "0000_romantic_rockslide",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1737536628884,
-      "tag": "0001_black_sheva_callister",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1737536889504,
-      "tag": "0002_special_punisher",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1737547665742,
-      "tag": "0003_nosy_texas_twister",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1737556941603,
-      "tag": "0004_fine_iron_lad",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1737557039250,
-      "tag": "0005_wide_pepper_potts",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1737557230733,
-      "tag": "0006_wide_forge",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1737558247374,
-      "tag": "0007_mean_sauron",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1737559522342,
-      "tag": "0008_flaky_salo",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1737563731244,
-      "tag": "0009_famous_snowbird",
+      "when": 1737566947724,
+      "tag": "0001_cynical_champions",
       "breakpoints": true
     }
   ]

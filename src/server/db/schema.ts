@@ -10,58 +10,45 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { pgTable, unique, foreignKey } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator((name) => `wardrobe-care_${name}`);
 
 export const ROLE = pgEnum("role", ["USER", "ADMIN", "NGO"]);
 export const STATUS = pgEnum("status", ["PENDING", "VERIFIED", "IN PROGRESS"]);
-export const wardrobeCareNgo = pgTable(
-  "wardrobe-care_ngo",
-  {
-    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-      .defaultNow()
-      .notNull(),
-    status: STATUS("status").default("IN PROGRESS"),
-    contactPerson: varchar("contact_person").default("").notNull(),
-    headOfficeAddress: varchar("head_office_address").notNull(),
-    website: varchar("website").notNull(),
-    bio: varchar("bio").notNull(),
-    proofOfRegistrationUrl: varchar("proof_of_registration_url").notNull(),
-    registrationId: varchar("registration_id").primaryKey().notNull(),
-    taxExemptionCertificateUrl: varchar(
-      "tax_exemption_certificate_url",
-    ).notNull(),
-  },
-  (table) => {
-    return {
-      wardrobeCareNgoRegistrationIdFkey: foreignKey({
-        columns: [table.registrationId],
-        foreignColumns: [users.registrationNumber],
-        name: "wardrobe-care_ngo_registration_id_fkey",
-      })
-        .onUpdate("cascade")
-        .onDelete("cascade"),
-      wardrobeCareNgoWebsiteKey: unique("wardrobe-care_ngo_website_key").on(
-        table.website,
-      ),
-      wardrobeCareNgoProofOfRegistrationUrlKey: unique(
-        "wardrobe-care_ngo_proof_of_registration_url_key",
-      ).on(table.proofOfRegistrationUrl),
-      wardrobeCareNgoRegistrationIdKey: unique(
-        "wardrobe-care_ngo_registration_id_key",
-      ).on(table.registrationId),
-      wardrobeCareNgoTaxExemptionCertificateUrlKey: unique(
-        "wardrobe-care_ngo_tax_exemption_certificate_url_key",
-      ).on(table.taxExemptionCertificateUrl),
-    };
-  },
-);
 
-export const wardrobeCareNgoRelations = relations(wardrobeCareNgo, ({ one }) => ({
+export const ngo = createTable("ngo", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .unique()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  contactPerson: varchar("contact_person", { length: 255 }).notNull().unique(),
+  headOfficeAddress: varchar("head_office_address", { length: 255 }).notNull(),
+  website: varchar("website", { length: 255 }).notNull(),
+  bio: text("bio").notNull(),
+  proofOfRegistrationUrl: text("proof_of_registration_url").notNull(),
+  taxExemptionCertificateUrl: text("tax_exemption_certificate_url").notNull(),
+  registrationId: varchar("registration_id", { length: 255 })
+    .notNull()
+    .unique(),
+});
+
+export const ngoRelation = relations(ngo, ({ one }) => ({
+  userNgo: one(userNgo, {
+    fields: [ngo.registrationId],
+    references: [userNgo.regId],
+  }),
+}));
+
+export const userNgo = createTable("user_ngo", {
+  regId: varchar("reg_id", { length: 255 }).notNull().unique().primaryKey(),
+  userId: varchar("user_id", { length: 255 }).notNull().unique(),
+});
+
+export const userNgoRelation = relations(userNgo, ({ one }) => ({
   users: one(users, {
-    fields: [wardrobeCareNgo.registrationId],
-    references: [users.registrationNumber],
+    fields: [userNgo.userId],
+    references: [users.id],
   }),
 }));
 
@@ -74,9 +61,6 @@ export const users = createTable("user", {
   email: varchar("email", { length: 255 }).notNull(),
   password: varchar("password", { length: 255 }),
   role: ROLE("role").default("USER"),
-  registrationNumber: varchar("registration_number", { length: 255 })
-    .unique()
-    .notNull(),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,

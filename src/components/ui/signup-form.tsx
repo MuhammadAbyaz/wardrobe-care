@@ -52,7 +52,6 @@ export function SignupForm() {
     },
   });
   const onSubmit = async (formValues: z.infer<typeof signUpSchema>) => {
-    console.log("submitted");
     const res = await signUp(formValues);
     console.log(res);
     if (res.success && res.user?.role === "USER") {

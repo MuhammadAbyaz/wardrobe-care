@@ -1,0 +1,1 @@
+ALTER TABLE "wardrobe-care_user_ngo" ADD PRIMARY KEY ("reg_id");
