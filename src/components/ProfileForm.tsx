@@ -30,13 +30,13 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
-  bio: "I own a computer.",
-  urls: [
-    { value: "https://shadcn.com" },
-    { value: "http://twitter.com/shadcn" },
-  ],
+const defaultValues: ProfileFormValues = {
+  contactPerson: "",
+  headOfficeAddress: "",
+  website: "",
+  bio: "",
+  urls: [{ value: "" }],
+  termsAgreement: false,
 };
 
 export function ProfileForm() {
@@ -174,19 +174,22 @@ export function ProfileForm() {
           control={form.control}
           name="termsAgreement"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  className="text-white"
                 />
+              </FormControl>
+              <div className="space-y-1 leading-none">
                 <FormLabel>
                   You agree to our terms and conditions and privacy policy.
                 </FormLabel>
                 <FormDescription>
                   Acknowledgment of rules for using the platform.
                 </FormDescription>
-              </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
