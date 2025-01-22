@@ -16,8 +16,11 @@ import {
   Recycle,
   Award,
   TrendingUp,
+  Plus,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface DonationData {
   id: string;
@@ -176,13 +179,20 @@ const DonationHistory = () => {
       <div className="container mx-auto max-w-7xl px-4 py-8">
         {/* Header Section */}
         <div className="space-y-6">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold tracking-tight">
-              Donation Dashboard
-            </h1>
-            <p className="text-gray-500">
-              Track and manage your clothing donations and disposals
-            </p>
+          <div className="flex w-full items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Donation Dashboard
+              </h1>
+              <p className="text-gray-500">
+                Track and manage your clothing donations and disposals
+              </p>
+            </div>
+            <Link href="/user/new-donation">
+              <Button className="text-white">
+                <Plus className="mr-2 h-4 w-4" /> New Donation
+              </Button>
+            </Link>
           </div>
 
           {/* Stats Grid */}
