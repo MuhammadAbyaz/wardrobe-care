@@ -17,16 +17,17 @@ export const ngoRegistration = async (data) => {
     .limit(1);
 
   const regNumber = ngoArr[0]?.regId;
-  return await db
-    .insert(ngo)
-    .values({
-      contactPerson: data.contactPerson,
-      headOfficeAddress: data.headOfficeAddress,
-      website: data.website,
-      bio: data.bio,
-      proofOfRegistrationUrl: data.regProofFilePath,
-      taxExemptionCertificateUrl: data.taxFilePath,
-      registrationId: regNumber,
-    })
-    .returning();
+   return await db
+     .insert(ngo)
+     .values({
+       contactPerson: data.contactPerson,
+       headOfficeAddress: data.headOfficeAddress,
+       website: data.website,
+       bio: data.bio,
+       proofOfRegistrationUrl: data.regProofFilePath,
+       taxExemptionCertificateUrl: data.taxFilePath,
+       registrationId: regNumber,
+       status: "PENDING",
+     })
+     .returning();
 };

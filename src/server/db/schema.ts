@@ -8,6 +8,7 @@ import {
   text,
   timestamp,
   varchar,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
@@ -15,6 +16,12 @@ export const createTable = pgTableCreator((name) => `wardrobe-care_${name}`);
 
 export const ROLE = pgEnum("role", ["USER", "ADMIN", "NGO"]);
 export const STATUS = pgEnum("status", ["PENDING", "VERIFIED", "IN PROGRESS"]);
+export const DONATION_TYPE = pgEnum("donation_type", ["DONATION", "DISPOSAL"]);
+export const ITEM_CONDITION = pgEnum("item_condition", [
+  "GOOD",
+  "NORMAL",
+  "BAD",
+]);
 
 export const ngo = createTable("ngo", {
   id: varchar("id", { length: 255 })
@@ -22,6 +29,7 @@ export const ngo = createTable("ngo", {
     .unique()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  status: STATUS("status").default("IN PROGRESS").notNull(),
   contactPerson: varchar("contact_person", { length: 255 }).notNull().unique(),
   headOfficeAddress: varchar("head_office_address", { length: 255 }).notNull(),
   website: varchar("website", { length: 255 }).notNull(),
@@ -29,15 +37,17 @@ export const ngo = createTable("ngo", {
   proofOfRegistrationUrl: text("proof_of_registration_url").notNull(),
   taxExemptionCertificateUrl: text("tax_exemption_certificate_url").notNull(),
   registrationId: varchar("registration_id", { length: 255 })
+    .references(() => userNgo.regId)
     .notNull()
     .unique(),
 });
 
-export const ngoRelation = relations(ngo, ({ one }) => ({
+export const ngoRelation = relations(ngo, ({ one, many }) => ({
   userNgo: one(userNgo, {
     fields: [ngo.registrationId],
     references: [userNgo.regId],
   }),
+  donations: many(donations),
 }));
 
 export const userNgo = createTable("user_ngo", {
@@ -70,7 +80,9 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  donations: many(donations),
 }));
+
 export const accounts = createTable(
   "account",
   {
@@ -97,7 +109,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_user_id_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -120,7 +132,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_user_id_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -139,5 +151,38 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
+
+export const donations = createTable("donation", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  ngoId: varchar("ngo_id", { length: 255 }).references(() => ngo.id),
+  donationType: DONATION_TYPE("donation_type").notNull(),
+  item: varchar("item", { length: 255 }).notNull(),
+  quantity: integer("quantity").notNull(),
+  pickupLocation: varchar("pickup_location", { length: 255 }).notNull(),
+  itemCondition: ITEM_CONDITION("item_condition").notNull(),
+  pickupDateTime: timestamp("pickup_date_time", {
+    mode: "date",
+    withTimezone: true,
+  }).notNull(),
+  additionalNotes: text("additional_notes"),
+  openToAnyNgo: boolean("open_to_any_ngo").default(false).notNull(),
+  createdAt: timestamp("created_at", {
+    mode: "date",
+    withTimezone: true,
+  })
+    .defaultNow()
+    .notNull(),
+});
+
+export const donationsRelations = relations(donations, ({ one }) => ({
+  user: one(users, { fields: [donations.userId], references: [users.id] }),
+  ngo: one(ngo, { fields: [donations.ngoId], references: [ngo.id] }),
+}));

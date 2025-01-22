@@ -1,0 +1,1 @@
+ALTER TABLE "wardrobe-care_ngo" ADD COLUMN "status" "status" DEFAULT 'IN PROGRESS' NOT NULL;

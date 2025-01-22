@@ -15,6 +15,20 @@
       "when": 1737566947724,
       "tag": "0001_cynical_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737569552735,
+      "tag": "0002_damp_cable",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1737570399104,
+      "tag": "0003_panoramic_drax",
+      "breakpoints": true
     }
   ]
 }
