@@ -30,6 +30,9 @@ import { db } from "@/server/db";
 import { donations, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/server/auth";
+import { format } from "date-fns";
+import { updateDonationStatus } from "@/server/ngo/actions";
+import ActionDropdown from "@/components/ActionDropdown";
 // import { format } from "date-fns";
 
 // interface DonationData {
@@ -109,6 +112,7 @@ const NgoDonationRequest = async () => {
     .from(donations)
     .innerJoin(users, eq(donations.userId, users.id))
     .where(eq(donations.ngoId, session?.user?.id));
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto max-w-7xl px-4 py-8">
@@ -198,13 +202,13 @@ const NgoDonationRequest = async () => {
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            {/* {format(donation.pickupDateTime, "PPp")} */}
+                            {format(donation.pickupDateTime, "yyyy-MM-dd")}
                           </TableCell>
                           <TableCell>{donation.pickupLocation}</TableCell>
                           <TableCell>
                             <Badge
                               variant={
-                                donation.status === "COMPLETED"
+                                donation.status === "DELIVERED"
                                   ? "completed"
                                   : donation.status === "ACCEPTED"
                                     ? "accepted"
@@ -215,25 +219,7 @@ const NgoDonationRequest = async () => {
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <span className="sr-only">Open menu</span>
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                  Accept Donation
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  Reject Donation
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  Mark as Completed
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                            <ActionDropdown donationId={donation.id} />
                           </TableCell>
                         </TableRow>
                       ))}
