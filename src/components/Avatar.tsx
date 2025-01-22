@@ -12,8 +12,8 @@ import { signOutAction } from "@/server/auth/actions";
 import Link from "next/link";
 
 const AvatarDropDown = ({ session }: { session: Session }) => {
-  const user = session.user;
-  console.log("user", user);
+  const user = session?.user;
+  const role = session?.user?.role;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -23,7 +23,9 @@ const AvatarDropDown = ({ session }: { session: Session }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
-          <Link>Dashboard</Link>
+          <Link href={role === "NGO" ? "/ngo/dashboard" : "/user"}>
+            Dashboard
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>History</DropdownMenuItem>
         <DropdownMenuItem onClick={signOutAction}>Logout</DropdownMenuItem>

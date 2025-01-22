@@ -60,7 +60,7 @@ export const authConfig = {
           email: userRecord.email,
           name: userRecord.name,
           role: userRecord.role,
-        } as User;
+        };
       },
     }),
     Google,
@@ -80,6 +80,7 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.name = user.name;
+        token.role = user.role;
       }
       return token;
     },
@@ -88,6 +89,7 @@ export const authConfig = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
+        session.user.role = token.role as string;
       }
       return session;
     },

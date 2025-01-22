@@ -5,6 +5,8 @@ const NgoRedirect = async () => {
   const session = await auth();
   if (!session) {
     redirect("/");
+  } else if (session.user.role !== "NGO") {
+    redirect("/user");
   }
   redirect("/ngo/profile");
 };
