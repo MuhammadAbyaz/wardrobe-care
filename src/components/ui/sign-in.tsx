@@ -29,8 +29,11 @@ import { signInSchema } from "@/lib/schemas";
 import { ArrowRight } from "lucide-react";
 import { redirect } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { RoundSpinner } from "./spinner";
+import { useState } from "react";
 
 function SignInPage() {
+  const [loading, setLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -39,11 +42,22 @@ function SignInPage() {
     },
   });
 
+  const ngoForm = useForm({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+    setLoading(true);
     const res = await signInWithCreds(data);
     if (res.success) {
+      setLoading(false);
       redirect(`/user`);
     } else {
+      setLoading(false);
       toast({
         title: "Error Occurred",
         variant: "destructive",
@@ -82,7 +96,7 @@ function SignInPage() {
               Google
             </Button>
 
-            <p className="text-muted-foreground before:bg-border after:bg-border flex items-center gap-x-3 text-sm before:h-px before:flex-1 after:h-px after:flex-1">
+            <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
               or
             </p>
             <Form {...form}>
@@ -116,8 +130,18 @@ function SignInPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full text-white">
-                  Sign in <ArrowRight className="ml-2 h-4 w-4" />
+                <Button
+                  type="submit"
+                  className="w-full text-white"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <RoundSpinner color="white" />
+                  ) : (
+                    <>
+                      Sign in <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </form>
             </Form>
@@ -125,15 +149,52 @@ function SignInPage() {
         </TabsContent>
         <TabsContent value="ngo">
           <CardContent className="grid gap-y-4">
-            <div className="space-y-2">
-              <Label>Email address</Label>
-              <Input type="email" required />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Password</Label>
-              <Input type="password" required />
-            </div>
+            <Form {...ngoForm}>
+              <form
+                onSubmit={ngoForm.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
+                <FormField
+                  control={ngoForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="shadcn" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={ngoForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input placeholder="shadcn" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="w-full text-white"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <RoundSpinner color="white" />
+                  ) : (
+                    <>
+                      Sign in <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
         </TabsContent>
       </Tabs>
