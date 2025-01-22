@@ -24,9 +24,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
+import { type z } from "zod";
 import { signInSchema } from "@/lib/schemas";
 import { ArrowRight } from "lucide-react";
+import { redirect } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 function SignInPage() {
   const form = useForm({
@@ -38,7 +40,16 @@ function SignInPage() {
   });
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    await signInWithCreds(data);
+    const res = await signInWithCreds(data);
+    if (res.success) {
+      redirect(`/user`);
+    } else {
+      toast({
+        title: "Error Occurred",
+        variant: "destructive",
+        description: "error",
+      });
+    }
   };
 
   return (
@@ -71,13 +82,13 @@ function SignInPage() {
               Google
             </Button>
 
-            <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+            <p className="text-muted-foreground before:bg-border after:bg-border flex items-center gap-x-3 text-sm before:h-px before:flex-1 after:h-px after:flex-1">
               or
             </p>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
+                className="space-y-4"
               >
                 <FormField
                   control={form.control}

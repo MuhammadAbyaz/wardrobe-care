@@ -5,9 +5,12 @@ import { signIn, signOut } from ".";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { hash } from "bcryptjs";
+import { redirect } from "next/navigation";
 
 export const signInAction = async () => {
   await signIn("google");
+  console.log("redirecting");
+  redirect("/user");
 };
 
 export const signOutAction = async () => {
@@ -21,20 +24,17 @@ export const signInWithCreds = async ({
   email: string;
   password: string;
 }) => {
-  console.log("in signin");
   try {
     const res: unknown = await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
-    console.log(res);
     if (res?.error) {
       return { success: false, error: res.error };
     }
-    return { success: true, user: res };
+    return { success: true };
   } catch (error) {
-    console.log(error);
     return { success: false, error: "Sign in error" };
   }
 };

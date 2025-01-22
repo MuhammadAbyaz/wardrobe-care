@@ -22,7 +22,10 @@ export default function Home() {
               rewards, and make a positive impact on the environment.
             </p>
             <div className="flex justify-center gap-4">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700">
+              <Button
+                size="lg"
+                className="bg-green-600 text-white hover:bg-green-700"
+              >
                 Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -46,17 +49,17 @@ export default function Home() {
           </motion.h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <FeatureCard
-              icon={<Recycle className="h-10 w-10 text-primary" />}
+              icon={<Recycle className="text-primary h-10 w-10" />}
               title="Easy Donation Process"
               description="Schedule pickups or find nearby donation points with just a few clicks."
             />
             <FeatureCard
-              icon={<Gift className="h-10 w-10 text-primary" />}
+              icon={<Gift className="text-primary h-10 w-10" />}
               title="Earn Rewards"
               description="Get points for every donation and redeem them for exclusive rewards."
             />
             <FeatureCard
-              icon={<Store className="h-10 w-10 text-primary" />}
+              icon={<Store className="text-primary h-10 w-10" />}
               title="Partner Brands"
               description="Access special discounts and offers from sustainable fashion brands."
             />

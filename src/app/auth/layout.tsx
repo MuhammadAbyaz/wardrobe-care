@@ -8,7 +8,6 @@ const Layout = async ({
   children: React.ReactNode;
 }>) => {
   const session = await auth();
-  console.log(session);
   if (session) redirect("/");
   return (
     <div className="flex min-h-screen items-center justify-center">

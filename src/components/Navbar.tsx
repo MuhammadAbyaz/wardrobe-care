@@ -25,7 +25,9 @@ export default async function Navbar({ session }: { session: Session | null }) {
           </div>
 
           {session ? (
-            <Button onClick={signOutAction}>Sign Out</Button>
+            <Button onClick={signOutAction} className="text-white">
+              Sign Out
+            </Button>
           ) : (
             <div className="flex items-center space-x-4">
               <Button variant="ghost" asChild>
