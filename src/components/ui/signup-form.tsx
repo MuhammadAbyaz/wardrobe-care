@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type z } from "zod";
-import { signUpSchema } from "@/lib/schemas";
+import { NGOSignUpSchema, signUpSchema } from "@/lib/schemas";
 import {
   Card,
   CardContent,
@@ -41,6 +41,17 @@ export function SignupForm() {
       role: "USER",
     },
   });
+
+  const ngoForm = useForm<z.infer<typeof NGOSignUpSchema>>({
+    resolver: zodResolver(NGOSignUpSchema),
+    defaultValues: {
+      orgname: "",
+      email: "",
+      password: "",
+      role: "NGO",
+      registrationnumber: "",
+    },
+  });
   const onSubmit = async (formValues: z.infer<typeof signUpSchema>) => {
     console.log("submitted");
     const res = await signUp(formValues);
@@ -59,6 +70,10 @@ export function SignupForm() {
         variant: "destructive",
       });
     }
+  };
+
+  const onNGOSubmit = async (formValues: z.infer<typeof NGOSignUpSchema>) => {
+    console.log(formValues);
   };
   return (
     <div className="mx-auto w-full max-w-md rounded-none bg-white p-4 shadow-input dark:bg-black md:rounded-2xl md:p-8">
@@ -167,36 +182,82 @@ export function SignupForm() {
             <TabsContent value="ngo">
               <CardContent className="grid gap-y-4">
                 <div className="py-4">
-                  <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-                    <LabelInputContainer>
-                      <Label htmlFor="firstname">First name</Label>
-                      <Input id="firstname" placeholder="John" type="text" />
-                    </LabelInputContainer>
-                    <LabelInputContainer>
-                      <Label htmlFor="lastname">Last name</Label>
-                      <Input id="lastname" placeholder="Doe" type="text" />
-                    </LabelInputContainer>
-                  </div>
-                  <LabelInputContainer className="mb-4">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      placeholder="xyz@wardrobe.com"
-                      type="email"
-                    />
-                  </LabelInputContainer>
-                  <LabelInputContainer className="mb-4">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      placeholder="••••••••"
-                      type="password"
-                    />
-                  </LabelInputContainer>
-
-                  <Button className="w-full text-white" type="submit">
-                    Sign up &rarr;
-                  </Button>
+                  <Form {...ngoForm}>
+                    <form
+                      onSubmit={ngoForm.handleSubmit(onNGOSubmit)}
+                      className="space-y-4"
+                    >
+                      <FormField
+                        control={ngoForm.control}
+                        name="orgname"
+                        render={({ field }) => (
+                          <FormItem>
+                            <LabelInputContainer>
+                              <FormLabel>Organization Name</FormLabel>
+                            </LabelInputContainer>
+                            <FormControl>
+                              <Input
+                                placeholder="Organization Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={ngoForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <LabelInputContainer>
+                              <FormLabel>Email</FormLabel>
+                            </LabelInputContainer>
+                            <FormControl>
+                              <Input placeholder="Email" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={ngoForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <LabelInputContainer>
+                              <FormLabel>Password</FormLabel>
+                            </LabelInputContainer>
+                            <FormControl>
+                              <Input placeholder="Password" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={ngoForm.control}
+                        name="registrationnumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <LabelInputContainer>
+                              <FormLabel>Registration Number</FormLabel>
+                            </LabelInputContainer>
+                            <FormControl>
+                              <Input
+                                placeholder="Registration Number"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button className="w-full text-white" type="submit">
+                        Sign up &rarr;
+                      </Button>
+                    </form>
+                  </Form>
                 </div>
               </CardContent>
               <CardFooter>
