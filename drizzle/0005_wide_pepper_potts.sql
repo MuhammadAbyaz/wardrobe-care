@@ -1,0 +1,1 @@
+ALTER TABLE "wardrobe-care_user" ADD CONSTRAINT "wardrobe-care_user_registration_number_unique" UNIQUE("registration_number");

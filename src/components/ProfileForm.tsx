@@ -18,6 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "./ui/checkbox";
+import { Dropzone } from "./Dropzone";
 
 const profileFormSchema = z.object({
   contactPerson: z.string().nonempty(),
@@ -172,11 +173,15 @@ export function ProfileForm() {
           </Button>
         </div>
         {/* Terms & Conditions Agreement: Acknowledgment of rules for using the platform. */}
+        <div className="flex flex-col gap-y-4 md:flex-row md:gap-x-4">
+          <Dropzone heading="Proof Of Registration" />
+          <Dropzone heading="Tax Exemption Certificate" />
+        </div>
         <FormField
           control={form.control}
           name="termsAgreement"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormItem className="items-startspace-x-3 flex flex-row space-y-0 rounded-md border p-4">
               <FormControl>
                 <Checkbox
                   checked={field.value}

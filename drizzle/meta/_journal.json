@@ -29,6 +29,27 @@
       "when": 1737547665742,
       "tag": "0003_nosy_texas_twister",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737556941603,
+      "tag": "0004_fine_iron_lad",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1737557039250,
+      "tag": "0005_wide_pepper_potts",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1737557230733,
+      "tag": "0006_wide_forge",
+      "breakpoints": true
     }
   ]
 }

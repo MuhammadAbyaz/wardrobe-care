@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -13,7 +12,6 @@ const Layout = async ({
   return (
     <div className="flex min-h-screen items-center justify-center">
       {children}
-      <Toaster />
     </div>
   );
 };
