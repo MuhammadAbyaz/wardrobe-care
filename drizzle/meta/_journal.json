@@ -50,6 +50,20 @@
       "when": 1737557230733,
       "tag": "0006_wide_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1737558247374,
+      "tag": "0007_mean_sauron",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1737559522342,
+      "tag": "0008_flaky_salo",
+      "breakpoints": true
     }
   ]
 }

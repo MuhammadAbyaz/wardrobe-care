@@ -25,7 +25,6 @@ const profileFormSchema = z.object({
   headOfficeAddress: z.string().nonempty(),
   website: z.string().url(),
   bio: z.string().nonempty(),
-  urls: z.array(z.object({ value: z.string().url() })),
   termsAgreement: z.boolean(),
 });
 
@@ -36,7 +35,6 @@ const defaultValues: ProfileFormValues = {
   headOfficeAddress: "",
   website: "",
   bio: "",
-  urls: [{ value: "" }],
   termsAgreement: false,
 };
 
@@ -46,11 +44,6 @@ export function ProfileForm() {
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
-  });
-
-  const { fields, append } = useFieldArray({
-    name: "urls",
-    control: form.control,
   });
 
   function onSubmit(data: ProfileFormValues) {
@@ -140,38 +133,6 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <div>
-          {fields.map((field, index) => (
-            <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-2"
-            onClick={() => append({ value: "" })}
-          >
-            Add URL
-          </Button>
-        </div>
         {/* Terms & Conditions Agreement: Acknowledgment of rules for using the platform. */}
         <div className="flex flex-col gap-y-4 md:flex-row md:gap-x-4">
           <Dropzone heading="Proof Of Registration" />

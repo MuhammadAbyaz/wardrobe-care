@@ -1,6 +1,5 @@
 import { relations, sql } from "drizzle-orm";
 import {
-  boolean,
   index,
   integer,
   pgEnum,
@@ -8,58 +7,61 @@ import {
   primaryKey,
   text,
   timestamp,
-  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
+import { pgTable, unique, foreignKey } from "drizzle-orm/pg-core";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
 export const createTable = pgTableCreator((name) => `wardrobe-care_${name}`);
 
 export const ROLE = pgEnum("role", ["USER", "ADMIN", "NGO"]);
-export const ngos = createTable("ngo", {
-  id: varchar("id", { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  contactPerson: varchar("contact_person", { length: 255 }).notNull(),
-  headOfficeAddress: text("head_office_address").notNull(),
-  website: varchar("website", { length: 255 }).notNull(),
-  bio: text("bio").notNull(),
-  termsAgreement: boolean("terms_agreement").notNull().default(false),
-  proofOfRegistrationUrl: varchar("proof_of_registration_url", { length: 255 }),
-  registrationId: varchar("registration_id", { length: 255 })
-    .references(() => users.registrationNumber)
-    .notNull()
-    .unique(),
-  taxExemptionCertificateUrl: varchar("tax_exemption_certificate_url", {
-    length: 255,
-  }),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
-});
-export const profilesRelations = relations(ngos, ({ one }) => ({
-  user: one(users, {
-    fields: [ngos.registrationId],
+export const wardrobeCareNgo = pgTable(
+  "wardrobe-care_ngo",
+  {
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+    contactPerson: varchar("contact_person").default("").notNull(),
+    headOfficeAddress: varchar("head_office_address").notNull(),
+    website: varchar("website").notNull(),
+    bio: varchar("bio").notNull(),
+    proofOfRegistrationUrl: varchar("proof_of_registration_url").notNull(),
+    registrationId: varchar("registration_id").primaryKey().notNull(),
+    taxExemptionCertificateUrl: varchar(
+      "tax_exemption_certificate_url",
+    ).notNull(),
+  },
+  (table) => {
+    return {
+      wardrobeCareNgoRegistrationIdFkey: foreignKey({
+        columns: [table.registrationId],
+        foreignColumns: [users.registrationNumber],
+        name: "wardrobe-care_ngo_registration_id_fkey",
+      })
+        .onUpdate("cascade")
+        .onDelete("cascade"),
+      wardrobeCareNgoWebsiteKey: unique("wardrobe-care_ngo_website_key").on(
+        table.website,
+      ),
+      wardrobeCareNgoProofOfRegistrationUrlKey: unique(
+        "wardrobe-care_ngo_proof_of_registration_url_key",
+      ).on(table.proofOfRegistrationUrl),
+      wardrobeCareNgoRegistrationIdKey: unique(
+        "wardrobe-care_ngo_registration_id_key",
+      ).on(table.registrationId),
+      wardrobeCareNgoTaxExemptionCertificateUrlKey: unique(
+        "wardrobe-care_ngo_tax_exemption_certificate_url_key",
+      ).on(table.taxExemptionCertificateUrl),
+    };
+  },
+);
+
+export const wardrobeCareNgoRelations = relations(wardrobeCareNgo, ({ one }) => ({
+  users: one(users, {
+    fields: [wardrobeCareNgo.registrationId],
     references: [users.registrationNumber],
   }),
 }));
-export const profileUrls = createTable("profile_urls", {
-  id: varchar("id", { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  profileId: uuid("profile_id").references(() => ngos.id, {
-    onDelete: "cascade",
-  }),
-  url: varchar("url", { length: 255 }).notNull(),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-});
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
@@ -70,7 +72,9 @@ export const users = createTable("user", {
   email: varchar("email", { length: 255 }).notNull(),
   password: varchar("password", { length: 255 }),
   role: ROLE("role").default("USER"),
-  registrationNumber: varchar("registration_number", { length: 255 }).unique(),
+  registrationNumber: varchar("registration_number", { length: 255 })
+    .unique()
+    .notNull(),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,
@@ -78,12 +82,8 @@ export const users = createTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
-export const usersRelations = relations(users, ({ one, many }) => ({
+export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
-  profile: one(ngos, {
-    fields: [users.registrationNumber],
-    references: [ngos.registrationId],
-  }),
 }));
 export const accounts = createTable(
   "account",
