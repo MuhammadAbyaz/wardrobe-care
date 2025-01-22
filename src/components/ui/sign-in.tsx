@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/ui/icons";
-import { signInAction } from "@/server/auth/actions";
+import { signInAction, signInWithCreds } from "@/server/auth/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,7 +38,7 @@ function SignInPage() {
   });
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    console.log(data);
+    await signInWithCreds(data);
   };
 
   return (

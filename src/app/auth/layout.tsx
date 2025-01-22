@@ -1,10 +1,15 @@
+import { auth } from "@/server/auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
-const layout = ({
+const Layout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const session = await auth();
+  console.log(session);
+  if (session) redirect("/");
   return (
     <div className="flex min-h-screen items-center justify-center">
       {children}
@@ -12,4 +17,4 @@ const layout = ({
   );
 };
 
-export default layout;
+export default Layout;

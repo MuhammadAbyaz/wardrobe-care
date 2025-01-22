@@ -22,12 +22,11 @@ declare module "next-auth" {
 }
 
 export const authConfig = {
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     CredentialsProvider({
-      credentials: {
-        email: { type: "email" },
-        password: { type: "password" },
-      },
       async authorize(credentials) {
         if (!credentials.email || !credentials.password) {
           return null;
@@ -72,13 +71,25 @@ export const authConfig = {
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
+  pages: {
+    signIn: "/auth/sign-in",
+  },
+
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.name = token.name as string;
+      }
+      return session;
+    },
   },
 } satisfies NextAuthConfig;

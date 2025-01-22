@@ -29,6 +29,7 @@ import {
 import { signUp } from "@/server/auth/actions";
 import { redirect } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 export function SignupForm() {
   const form = useForm<z.infer<typeof signUpSchema>>({
