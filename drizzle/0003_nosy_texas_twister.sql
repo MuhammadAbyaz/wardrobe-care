@@ -1,0 +1,1 @@
+ALTER TABLE "wardrobe-care_user" ADD COLUMN "registration_number" varchar(255);

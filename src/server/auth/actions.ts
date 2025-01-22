@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { signIn, signOut } from ".";
 import { db } from "../db";
 import { users } from "../db/schema";
@@ -64,6 +64,44 @@ export const signUp = async (params: AuthCreds) => {
 
     await signInWithCreds({ email, password });
     return { success: true, user: user[0] };
+  } catch (error) {
+    console.log(error, "Sign up error");
+    return { success: false, error: "Sign up error" };
+  }
+};
+
+export const ngoSignUp = async (params: NGOAuthCreds) => {
+  const { orgname, email, password, role, registrationnumber } = params;
+  const existingUser = await db
+    .select()
+    .from(users)
+    .where(
+      and(
+        eq(users.email, email),
+        eq(users.registrationNumber, registrationnumber),
+      ),
+    )
+    .limit(1);
+  if (existingUser.length > 0) {
+    return { success: false, error: "NGO already exists" };
+  }
+
+  const hashedPassword = await hash(password, 10);
+
+  try {
+    const ngo = await db
+      .insert(users)
+      .values({
+        name: orgname,
+        email,
+        password: hashedPassword,
+        role,
+        registrationNumber: registrationnumber,
+      })
+      .returning();
+
+    await signInWithCreds({ email, password });
+    return { success: true, user: ngo[0] };
   } catch (error) {
     console.log(error, "Sign up error");
     return { success: false, error: "Sign up error" };

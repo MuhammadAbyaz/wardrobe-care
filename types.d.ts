@@ -9,3 +9,10 @@ interface AuthCreds {
   role: ROLE;
   fullname: string;
 }
+interface NGOAuthCreds {
+  orgname: string;
+  email: string;
+  password: string;
+  role: ROLE;
+  registrationnumber: string;
+}

@@ -25,7 +25,7 @@ export default async function Navbar({ session }: { session: Session | null }) {
           </div>
 
           {session ? (
-            <Button onClick={signOutAction} className="text-white" asChild>
+            <Button onClick={signOutAction} className="text-white">
               Sign Out <LogOut className="ml-2 h-4 w-4" />
             </Button>
           ) : (
@@ -33,7 +33,10 @@ export default async function Navbar({ session }: { session: Session | null }) {
               <Button variant="ghost" asChild>
                 <Link href={"/auth/sign-in"}>Log In</Link>
               </Button>
-              <Button className="bg-green-600 text-white hover:bg-green-700">
+              <Button
+                className="bg-green-600 text-white hover:bg-green-700"
+                asChild
+              >
                 <Link href={"/auth/sign-up"}>Sign Up</Link>
               </Button>
             </div>

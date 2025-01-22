@@ -30,6 +30,7 @@ export const users = createTable("user", {
   email: varchar("email", { length: 255 }).notNull(),
   password: varchar("password", { length: 255 }),
   role: ROLE("role").default("USER"),
+  registrationNumber: varchar("registration_number", { length: 255 }),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,
@@ -40,7 +41,6 @@ export const users = createTable("user", {
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
 }));
-
 export const accounts = createTable(
   "account",
   {

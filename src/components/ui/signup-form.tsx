@@ -26,7 +26,7 @@ import {
   CardTitle,
   CardFooter,
 } from "./card";
-import { signUp } from "@/server/auth/actions";
+import { ngoSignUp, signUp } from "@/server/auth/actions";
 import { redirect } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
@@ -73,10 +73,19 @@ export function SignupForm() {
   };
 
   const onNGOSubmit = async (formValues: z.infer<typeof NGOSignUpSchema>) => {
-    console.log(formValues);
+    const res = await ngoSignUp(formValues);
+    if (res.error) {
+      toast({
+        title: "Error Occurred",
+        variant: "destructive",
+        description: "error",
+      });
+    } else {
+      redirect("/");
+    }
   };
   return (
-    <div className="mx-auto w-full max-w-md rounded-none bg-white p-4 shadow-input dark:bg-black md:rounded-2xl md:p-8">
+    <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
       <Card className="w-full sm:w-96">
         <CardHeader>
           <CardTitle>Welcome to Wardrobe Care</CardTitle>
@@ -108,7 +117,7 @@ export function SignupForm() {
                     <Icons.google className="mr-2 size-4" />
                     Google
                   </Button>
-                  <p className="my-3 flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+                  <p className="text-muted-foreground before:bg-border after:bg-border my-3 flex items-center gap-x-3 text-sm before:h-px before:flex-1 after:h-px after:flex-1">
                     or
                   </p>
                   <Form {...form}>
