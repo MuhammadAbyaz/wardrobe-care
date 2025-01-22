@@ -35,7 +35,7 @@ function SignInPage() {
             Google
           </Button>
 
-          <p className="text-muted-foreground before:bg-border after:bg-border flex items-center gap-x-3 text-sm before:h-px before:flex-1 after:h-px after:flex-1">
+          <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
             or
           </p>
 
@@ -54,7 +54,9 @@ function SignInPage() {
           <div className="grid w-full gap-y-4">
             <Button>Sign in</Button>
             <Button variant="link" size="sm" asChild>
-              <Link href="/signup">Don&apos;t have an account? Sign up</Link>
+              <Link href="/auth/sign-up">
+                Don&apos;t have an account? Sign up
+              </Link>
             </Button>
           </div>
         </CardFooter>

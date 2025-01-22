@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
-import Navbar from "@/components/Navbar";
-import { auth } from "@/server/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +15,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Navbar session={session} />
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

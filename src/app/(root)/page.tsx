@@ -46,17 +46,17 @@ export default function Home() {
           </motion.h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <FeatureCard
-              icon={<Recycle className="text-primary h-10 w-10" />}
+              icon={<Recycle className="h-10 w-10 text-primary" />}
               title="Easy Donation Process"
               description="Schedule pickups or find nearby donation points with just a few clicks."
             />
             <FeatureCard
-              icon={<Gift className="text-primary h-10 w-10" />}
+              icon={<Gift className="h-10 w-10 text-primary" />}
               title="Earn Rewards"
               description="Get points for every donation and redeem them for exclusive rewards."
             />
             <FeatureCard
-              icon={<Store className="text-primary h-10 w-10" />}
+              icon={<Store className="h-10 w-10 text-primary" />}
               title="Partner Brands"
               description="Access special discounts and offers from sustainable fashion brands."
             />
@@ -146,7 +146,7 @@ function ImpactStat({ number, label }: { number: string; label: string }) {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="text-primary text-4xl font-bold"
+        className="text-4xl font-bold text-primary"
       >
         {number}
       </motion.div>
