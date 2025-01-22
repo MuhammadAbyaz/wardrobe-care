@@ -25,7 +25,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "./card";
+import Link from "next/link";
 
 export function SignupForm() {
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -136,6 +138,15 @@ export function SignupForm() {
                   </Form>
                 </div>
               </CardContent>
+              <CardFooter>
+                <div className="grid w-full gap-y-4">
+                  <Button variant="link" size="sm" asChild>
+                    <Link href="/auth/sign-in">
+                      Already have an account? Sign in
+                    </Link>
+                  </Button>
+                </div>
+              </CardFooter>
             </TabsContent>
             <TabsContent value="ngo">
               <CardContent className="grid gap-y-4">
@@ -172,6 +183,15 @@ export function SignupForm() {
                   </Button>
                 </div>
               </CardContent>
+              <CardFooter>
+                <div className="grid w-full gap-y-4">
+                  <Button variant="link" size="sm" asChild>
+                    <Link href="/auth/sign-in">
+                      Already have an account? Sign in
+                    </Link>
+                  </Button>
+                </div>
+              </CardFooter>
             </TabsContent>
           </Tabs>
         </div>
