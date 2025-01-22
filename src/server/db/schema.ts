@@ -22,6 +22,12 @@ export const ITEM_CONDITION = pgEnum("item_condition", [
   "NORMAL",
   "BAD",
 ]);
+export const DONATION_STATUS = pgEnum("donation_status", [
+  "PENDING",
+  "ACCEPTED",
+  "REJECTED",
+  "DELIVERED",
+]);
 
 export const ngo = createTable("ngo", {
   id: varchar("id", { length: 255 })
@@ -173,6 +179,7 @@ export const donations = createTable("donation", {
     withTimezone: true,
   }).notNull(),
   additionalNotes: text("additional_notes"),
+  status: DONATION_STATUS("status").default("PENDING").notNull(),
   createdAt: timestamp("created_at", {
     mode: "date",
     withTimezone: true,

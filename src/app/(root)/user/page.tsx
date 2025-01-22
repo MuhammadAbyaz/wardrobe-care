@@ -21,126 +21,131 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { db } from "@/server/db";
+import { donations, ngo, users } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
+import { auth } from "@/server/auth";
+import { format } from "date-fns";
 
-interface DonationData {
-  id: string;
-  date: string;
-  type: "Donation" | "Disposal";
-  ngoName?: string;
-  items: string;
-  quantity: number;
-  status:
-    | "Pending"
-    | "Scheduled"
-    | "Picked Up"
-    | "In Transit"
-    | "Delivered"
-    | "Completed";
-  method: "Pickup" | "Drop-off";
-  scheduledDate: string;
-  rewardPoints: number;
-  vouchers?: string;
-}
+// interface DonationData {
+//   id: string;
+//   date: string;
+//   type: "Donation" | "Disposal";
+//   ngoName?: string;
+//   items: string;
+//   quantity: number;
+//   status:
+//     | "Pending"
+//     | "Scheduled"
+//     | "Picked Up"
+//     | "In Transit"
+//     | "Delivered"
+//     | "Completed";
+//   method: "Pickup" | "Drop-off";
+//   scheduledDate: string;
+//   rewardPoints: number;
+//   vouchers?: string;
+// }
 
-const donationData: DonationData[] = [
-  {
-    id: "DON-2024-001",
-    date: "2024-03-15",
-    type: "Donation",
-    ngoName: "GreenEarth Foundation",
-    items: "Winter Clothing Bundle",
-    quantity: 5,
-    status: "Delivered",
-    method: "Pickup",
-    scheduledDate: "2024-03-14",
-    rewardPoints: 500,
-    vouchers: "20% off at H&M",
-  },
-  {
-    id: "DIS-2024-001",
-    date: "2024-03-12",
-    type: "Disposal",
-    items: "Damaged Textiles",
-    quantity: 3,
-    status: "Completed",
-    method: "Pickup",
-    scheduledDate: "2024-03-11",
-    rewardPoints: 150,
-  },
-  {
-    id: "DON-2024-002",
-    date: "2024-03-10",
-    type: "Donation",
-    ngoName: "Care & Share",
-    items: "Children's Clothes",
-    quantity: 8,
-    status: "In Transit",
-    method: "Drop-off",
-    scheduledDate: "2024-03-09",
-    rewardPoints: 800,
-    vouchers: "₹500 off at FirstCry",
-  },
-  {
-    id: "DON-2024-003",
-    date: "2024-03-05",
-    type: "Donation",
-    ngoName: "Hope Foundation",
-    items: "Summer Collection",
-    quantity: 12,
-    status: "Delivered",
-    method: "Pickup",
-    scheduledDate: "2024-03-04",
-    rewardPoints: 1200,
-    vouchers: "15% off at Zara",
-  },
-  {
-    id: "DIS-2024-002",
-    date: "2024-03-02",
-    type: "Disposal",
-    items: "Old Shoes & Bags",
-    quantity: 4,
-    status: "Completed",
-    method: "Drop-off",
-    scheduledDate: "2024-03-01",
-    rewardPoints: 200,
-  },
-  {
-    id: "DON-2024-004",
-    date: "2024-02-28",
-    type: "Donation",
-    ngoName: "Helping Hands",
-    items: "Professional Attire",
-    quantity: 6,
-    status: "Delivered",
-    method: "Pickup",
-    scheduledDate: "2024-02-27",
-    rewardPoints: 600,
-    vouchers: "₹1000 off at Marks & Spencer",
-  },
-  {
-    id: "DON-2024-005",
-    date: "2024-02-25",
-    type: "Donation",
-    ngoName: "Second Chance",
-    items: "Kids Accessories",
-    quantity: 10,
-    status: "Pending",
-    method: "Drop-off",
-    scheduledDate: "2024-03-20",
-    rewardPoints: 300,
-  },
-  {
-    id: "DIS-2024-003",
-    date: "2024-02-20",
-    type: "Disposal",
-    items: "Worn Out Clothes",
-    quantity: 7,
-    status: "Scheduled",
-    method: "Pickup",
-    scheduledDate: "2024-03-22",
-    rewardPoints: 175,
-  },
-];
+// const donationData: DonationData[] = [
+//   {
+//     id: "DON-2024-001",
+//     date: "2024-03-15",
+//     type: "Donation",
+//     ngoName: "GreenEarth Foundation",
+//     items: "Winter Clothing Bundle",
+//     quantity: 5,
+//     status: "Delivered",
+//     method: "Pickup",
+//     scheduledDate: "2024-03-14",
+//     rewardPoints: 500,
+//     vouchers: "20% off at H&M",
+//   },
+//   {
+//     id: "DIS-2024-001",
+//     date: "2024-03-12",
+//     type: "Disposal",
+//     items: "Damaged Textiles",
+//     quantity: 3,
+//     status: "Completed",
+//     method: "Pickup",
+//     scheduledDate: "2024-03-11",
+//     rewardPoints: 150,
+//   },
+//   {
+//     id: "DON-2024-002",
+//     date: "2024-03-10",
+//     type: "Donation",
+//     ngoName: "Care & Share",
+//     items: "Children's Clothes",
+//     quantity: 8,
+//     status: "In Transit",
+//     method: "Drop-off",
+//     scheduledDate: "2024-03-09",
+//     rewardPoints: 800,
+//     vouchers: "₹500 off at FirstCry",
+//   },
+//   {
+//     id: "DON-2024-003",
+//     date: "2024-03-05",
+//     type: "Donation",
+//     ngoName: "Hope Foundation",
+//     items: "Summer Collection",
+//     quantity: 12,
+//     status: "Delivered",
+//     method: "Pickup",
+//     scheduledDate: "2024-03-04",
+//     rewardPoints: 1200,
+//     vouchers: "15% off at Zara",
+//   },
+//   {
+//     id: "DIS-2024-002",
+//     date: "2024-03-02",
+//     type: "Disposal",
+//     items: "Old Shoes & Bags",
+//     quantity: 4,
+//     status: "Completed",
+//     method: "Drop-off",
+//     scheduledDate: "2024-03-01",
+//     rewardPoints: 200,
+//   },
+//   {
+//     id: "DON-2024-004",
+//     date: "2024-02-28",
+//     type: "Donation",
+//     ngoName: "Helping Hands",
+//     items: "Professional Attire",
+//     quantity: 6,
+//     status: "Delivered",
+//     method: "Pickup",
+//     scheduledDate: "2024-02-27",
+//     rewardPoints: 600,
+//     vouchers: "₹1000 off at Marks & Spencer",
+//   },
+//   {
+//     id: "DON-2024-005",
+//     date: "2024-02-25",
+//     type: "Donation",
+//     ngoName: "Second Chance",
+//     items: "Kids Accessories",
+//     quantity: 10,
+//     status: "Pending",
+//     method: "Drop-off",
+//     scheduledDate: "2024-03-20",
+//     rewardPoints: 300,
+//   },
+//   {
+//     id: "DIS-2024-003",
+//     date: "2024-02-20",
+//     type: "Disposal",
+//     items: "Worn Out Clothes",
+//     quantity: 7,
+//     status: "Scheduled",
+//     method: "Pickup",
+//     scheduledDate: "2024-03-22",
+//     rewardPoints: 175,
+//   },
+// ];
 
 const stats = [
   {
@@ -173,7 +178,20 @@ const stats = [
   },
 ];
 
-const DonationHistory = () => {
+const DonationHistory = async () => {
+  const session = await auth();
+  const donationsData = await db
+    .select({
+      id: donations.id,
+      createdAt: donations.createdAt,
+      donationType: donations.donationType,
+      item: donations.item,
+      status: donations.status,
+      name: users.name,
+    })
+    .from(donations)
+    .innerJoin(users, eq(donations.ngoId, users.id))
+    .where(eq(donations.userId, session?.user?.id));
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto max-w-7xl px-4 py-8">
@@ -242,7 +260,6 @@ const DonationHistory = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-[100px]">ID</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Type</TableHead>
                         <TableHead>NGO/Service</TableHead>
@@ -254,36 +271,35 @@ const DonationHistory = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {donationData.map((data) => (
+                      {donationsData.map((data) => (
                         <TableRow key={data.id}>
-                          <TableCell className="font-medium">
-                            {data.id}
-                          </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <CalendarDays className="h-4 w-4 text-gray-500" />
-                              {data.date}
+                              {format(data.createdAt, "yyyy-MM-dd")}
                             </div>
                           </TableCell>
                           <TableCell>
                             <Chip
                               variant={
-                                data.type === "Donation" ? "blue" : "purple"
+                                data.donationType === "DONATION"
+                                  ? "blue"
+                                  : "purple"
                               }
                             >
-                              {data.type}
+                              {data.donationType}
                             </Chip>
                           </TableCell>
                           <TableCell>
-                            {data.ngoName || "Eco-Disposal Service"}
+                            {data.name || "Eco-Disposal Service"}
                           </TableCell>
-                          <TableCell>{data.items}</TableCell>
+                          <TableCell>{data.item}</TableCell>
                           <TableCell>
                             <Chip
                               variant={
-                                data.status === "Delivered"
+                                data.status === "DELIVERED"
                                   ? "green"
-                                  : data.status === "Pending"
+                                  : data.status === "PENDING"
                                     ? "yellow"
                                     : "blue"
                               }
@@ -292,17 +308,8 @@ const DonationHistory = () => {
                             </Chip>
                           </TableCell>
                           <TableCell>
-                            <Chip
-                              variant={
-                                data.method === "Pickup" ? "teal" : "orange"
-                              }
-                            >
-                              {data.method}
-                            </Chip>
-                          </TableCell>
-                          <TableCell>
                             <span className="font-semibold text-emerald-600">
-                              {data.rewardPoints}
+                              100
                             </span>
                           </TableCell>
                           <TableCell>
@@ -321,17 +328,19 @@ const DonationHistory = () => {
 
               {/* Mobile View */}
               <div className="space-y-4 md:hidden">
-                {donationData.map((data) => (
+                {donationsData.map((data) => (
                   <Card key={data.id}>
                     <CardContent className="space-y-4 p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Chip
                             variant={
-                              data.type === "Donation" ? "blue" : "purple"
+                              data.donationType === "DONATION"
+                                ? "blue"
+                                : "purple"
                             }
                           >
-                            {data.type}
+                            {data.donationType}
                           </Chip>
                           <span className="text-sm font-medium">
                             #{data.id}
@@ -339,9 +348,9 @@ const DonationHistory = () => {
                         </div>
                         <Chip
                           variant={
-                            data.status === "Delivered"
+                            data.status === "DELIVERED"
                               ? "green"
-                              : data.status === "Pending"
+                              : data.status === "PENDING"
                                 ? "yellow"
                                 : "blue"
                           }
@@ -355,30 +364,12 @@ const DonationHistory = () => {
                           <span className="text-gray-500">Date</span>
                           <div className="mt-1 flex items-center gap-2 font-medium">
                             <CalendarDays className="h-4 w-4" />
-                            {data.date}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Method</span>
-                          <div className="mt-1">
-                            <Chip
-                              variant={
-                                data.method === "Pickup" ? "teal" : "orange"
-                              }
-                            >
-                              {data.method}
-                            </Chip>
+                            {format(data.createdAt, "yyyy-MM-dd")}
                           </div>
                         </div>
                         <div>
                           <span className="text-gray-500">Items</span>
-                          <p className="mt-1 font-medium">{data.items}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Points</span>
-                          <p className="mt-1 font-medium text-emerald-600">
-                            {data.rewardPoints}
-                          </p>
+                          <p className="mt-1 font-medium">{data.item}</p>
                         </div>
                       </div>
 

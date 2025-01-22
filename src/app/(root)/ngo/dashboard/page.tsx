@@ -26,35 +26,39 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { db } from "@/server/db";
+import { donations, users } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
+import { auth } from "@/server/auth";
 // import { format } from "date-fns";
 
-interface DonationData {
-  id: string;
-  userName: string;
-  item: string;
-  quantity: number;
-  pickupLocation: string;
-  itemCondition: "GOOD" | "NORMAL" | "BAD";
-  pickupDateTime: Date;
-  donationType: "DONATION" | "DISPOSAL";
-  status: "PENDING" | "ACCEPTED" | "REJECTED" | "COMPLETED";
-  additionalNotes?: string;
-}
+// interface DonationData {
+//   id: string;
+//   userName: string;
+//   item: string;
+//   quantity: number;
+//   pickupLocation: string;
+//   itemCondition: "GOOD" | "NORMAL" | "BAD";
+//   pickupDateTime: Date;
+//   donationType: "DONATION" | "DISPOSAL";
+//   status: "PENDING" | "ACCEPTED" | "REJECTED" | "COMPLETED";
+//   additionalNotes?: string;
+// }
 
-const donationsData: DonationData[] = [
-  {
-    id: "DON-001",
-    userName: "John Doe",
-    item: "Winter Clothing",
-    quantity: 5,
-    pickupLocation: "123 Main St, City",
-    itemCondition: "BAD",
-    pickupDateTime: new Date("2024-03-20T10:00:00"),
-    donationType: "DONATION",
-    status: "ACCEPTED",
-    additionalNotes: "All items are cleaned and packed",
-  },
-];
+// const donationsData: DonationData[] = [
+//   {
+//     id: "DON-001",
+//     userName: "John Doe",
+//     item: "Winter Clothing",
+//     quantity: 5,
+//     pickupLocation: "123 Main St, City",
+//     itemCondition: "BAD",
+//     pickupDateTime: new Date("2024-03-20T10:00:00"),
+//     donationType: "DONATION",
+//     status: "ACCEPTED",
+//     additionalNotes: "All items are cleaned and packed",
+//   },
+// ];
 
 const stats = [
   {
@@ -87,7 +91,24 @@ const stats = [
   },
 ];
 
-const NgoDonationRequest = () => {
+const NgoDonationRequest = async () => {
+  const session = await auth();
+  const donationsData = await db
+    .select({
+      id: donations.id,
+      item: donations.item,
+      quantity: donations.quantity,
+      pickupLocation: donations.pickupLocation,
+      itemCondition: donations.itemCondition,
+      pickupDateTime: donations.pickupDateTime,
+      donationType: donations.donationType,
+      status: donations.status,
+      additionalNotes: donations.additionalNotes,
+      userName: users.name,
+    })
+    .from(donations)
+    .innerJoin(users, eq(donations.userId, users.id))
+    .where(eq(donations.ngoId, session?.user?.id));
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto max-w-7xl px-4 py-8">
