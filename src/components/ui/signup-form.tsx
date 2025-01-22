@@ -10,14 +10,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
+import { type z } from "zod";
 import { signUpSchema } from "@/lib/schemas";
 import {
   Card,
@@ -26,6 +25,9 @@ import {
   CardHeader,
   CardTitle,
 } from "./card";
+import { signUp } from "@/server/auth/actions";
+import { redirect } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 export function SignupForm() {
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -34,10 +36,27 @@ export function SignupForm() {
       fullname: "",
       email: "",
       password: "",
+      role: "USER",
     },
   });
-  const onSubmit = (formValues: z.infer<typeof signUpSchema>) => {
-    console.log(formValues);
+  const onSubmit = async (formValues: z.infer<typeof signUpSchema>) => {
+    console.log("submitted");
+    const res = await signUp(formValues);
+    console.log(res);
+    if (res.success && res.user?.role === "USER") {
+      redirect("/");
+    } else if (res.success && res.user?.role === "ADMIN") {
+      console.log("Admin Spotted");
+      return;
+    } else if (res.success && res.user?.role === "NGO") {
+      console.log("NGO spotted");
+      return;
+    } else {
+      toast({
+        title: "Error Occurred",
+        variant: "destructive",
+      });
+    }
   };
   return (
     <div className="mx-auto w-full max-w-md rounded-none bg-white p-4 shadow-input dark:bg-black md:rounded-2xl md:p-8">
@@ -45,7 +64,7 @@ export function SignupForm() {
         <CardHeader>
           <CardTitle>Welcome to Wardrobe Care</CardTitle>
           <CardDescription>
-            Your old clothes can be someone's new clothes. Sign up to donate
+            Your old clothes can be someone{"'"}s new clothes. Sign up to donate
           </CardDescription>
         </CardHeader>
 
@@ -78,7 +97,7 @@ export function SignupForm() {
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-8"
+                      className="space-y-4"
                     >
                       <FormField
                         control={form.control}
@@ -91,9 +110,6 @@ export function SignupForm() {
                             <FormControl>
                               <Input placeholder="Full Name" {...field} />
                             </FormControl>
-                            <FormDescription>
-                              This is your public display name.
-                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}

@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import { auth } from "@/server/auth";
-import React, { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
