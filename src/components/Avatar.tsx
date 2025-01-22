@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -8,9 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { type Session } from "next-auth";
 import { signOutAction } from "@/server/auth/actions";
+import Link from "next/link";
 
 const AvatarDropDown = ({ session }: { session: Session }) => {
   const user = session.user;
+  console.log("user", user);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -19,7 +22,9 @@ const AvatarDropDown = ({ session }: { session: Session }) => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>Dashboard</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link>Dashboard</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem>History</DropdownMenuItem>
         <DropdownMenuItem onClick={signOutAction}>Logout</DropdownMenuItem>
       </DropdownMenuContent>

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { ngoRegistration } from "@/server/ngo/actions";
 import { redirect } from "next/navigation";
-import { Session } from "next-auth";
+import { type Session } from "next-auth";
+import { RoundSpinner } from "./ui/spinner";
 
 const profileFormSchema = z.object({
   contactPerson: z.string().nonempty(),
@@ -43,6 +44,7 @@ const defaultValues: ProfileFormValues = {
 };
 
 export function ProfileForm({ session }: { session: Session }) {
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const supabaseClient = createClient();
 
@@ -66,10 +68,18 @@ export function ProfileForm({ session }: { session: Session }) {
     const { data: res, error } = await supabaseClient.storage
       .from(bucket)
       .upload(id, file, { cacheControl: "5", upsert: true });
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to upload the file",
+      });
+    }
     return res?.path;
   };
 
   async function onSubmit(data: ProfileFormValues) {
+    setLoading(true);
     const TAX_BUCKET = process.env.NEXT_PUBLIC_TAX_BUCKET!;
     const REG_PROOF_BUCKET = process.env.NEXT_PUBLIC_REG_BUCKET!;
     const taxFilePath = await uploadFile({
@@ -85,6 +95,7 @@ export function ProfileForm({ session }: { session: Session }) {
     const formtattedData = { ...data, taxFilePath, regProofFilePath };
     const res = await ngoRegistration(formtattedData);
     if (res) {
+      setLoading(false);
       toast({
         variant: "default",
         title: "Success",
@@ -92,13 +103,10 @@ export function ProfileForm({ session }: { session: Session }) {
       });
       redirect("/ngo/dashboard");
     }
+    setLoading(false);
     toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      title: "Error occurred while registring NGO",
+      description: "Please try again",
     });
   }
 
@@ -209,8 +217,9 @@ export function ProfileForm({ session }: { session: Session }) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="text-white">
-          Submit
+
+        <Button type="submit" className="w-full text-white" disabled={loading}>
+          {loading ? <RoundSpinner color="white" /> : <>Submit</>}
         </Button>
       </form>
     </Form>

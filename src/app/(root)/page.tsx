@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Recycle, Gift, Store } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -101,7 +102,7 @@ export default function Home() {
               and promote sustainable fashion.
             </p>
             <Button size="lg" variant="secondary">
-              Sign Up Now
+              <Link href="/auth/sign-up">Sign Up Now</Link>
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </motion.div>
