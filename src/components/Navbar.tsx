@@ -9,10 +9,9 @@ export default async function Navbar({ session }: { session: Session | null }) {
     <header className="border-b">
       <div className="container mx-auto max-w-6xl px-4 md:px-6 lg:px-8">
         <nav className="flex h-16 items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-primary">
+          <Link href="/" className="text-primary text-xl font-bold">
             Wardrobe Care
           </Link>
-
           <div className="hidden items-center space-x-8 md:flex">
             <Link href="#" className="text-gray-600 hover:text-gray-900">
               How It Works
@@ -26,7 +25,7 @@ export default async function Navbar({ session }: { session: Session | null }) {
           </div>
 
           {session ? (
-            <Button onClick={signOutAction} className="text-white">
+            <Button onClick={signOutAction} className="text-white" asChild>
               Sign Out <LogOut className="ml-2 h-4 w-4" />
             </Button>
           ) : (

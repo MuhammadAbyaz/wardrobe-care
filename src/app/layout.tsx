@@ -5,9 +5,9 @@ import "@/styles/globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "EcoCloset - Sustainable Clothing Donation Platform",
+  title: "Wardrobe Care - Sustainable Clothing Donation Platform",
   description:
-    "Donate clothes, earn rewards, and make a positive impact on the environment",
+    "Your old clothes can be someones new clothes. Sign up to donate",
 };
 
 export default async function RootLayout({
