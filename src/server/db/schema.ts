@@ -162,7 +162,7 @@ export const donations = createTable("donation", {
   userId: varchar("user_id", { length: 255 })
     .notNull()
     .references(() => users.id),
-  ngoId: varchar("ngo_id", { length: 255 }).references(() => ngo.id),
+  ngoId: varchar("ngo_id", { length: 255 }).references(() => userNgo.userId),
   donationType: DONATION_TYPE("donation_type").notNull(),
   item: varchar("item", { length: 255 }).notNull(),
   quantity: integer("quantity").notNull(),
@@ -173,7 +173,6 @@ export const donations = createTable("donation", {
     withTimezone: true,
   }).notNull(),
   additionalNotes: text("additional_notes"),
-  openToAnyNgo: boolean("open_to_any_ngo").default(false).notNull(),
   createdAt: timestamp("created_at", {
     mode: "date",
     withTimezone: true,
@@ -184,5 +183,8 @@ export const donations = createTable("donation", {
 
 export const donationsRelations = relations(donations, ({ one }) => ({
   user: one(users, { fields: [donations.userId], references: [users.id] }),
-  ngo: one(ngo, { fields: [donations.ngoId], references: [ngo.id] }),
+  userNgo: one(userNgo, {
+    fields: [donations.ngoId],
+    references: [userNgo.userId],
+  }),
 }));

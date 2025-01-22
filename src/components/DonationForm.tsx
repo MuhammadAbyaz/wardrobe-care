@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Form,
@@ -33,15 +34,17 @@ import { Textarea } from "./ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { addDonation } from "@/server/donation/actions";
+import { toast } from "@/hooks/use-toast";
+import { redirect } from "next/navigation";
 
 const donationFormSchema = z.object({
-  donationType: z.enum(["donation", "disposal"]),
+  donationType: z.enum(["DONATION", "DISPOSAL"]),
   itemDescription: z.string().min(1, "Item description is required"),
-  quantity: z.number().min(1, "Quantity must be at least 1"),
+  quantity: z.coerce.number().min(1, "Quantity must be at least 1"),
   location: z.string().min(1, "Pickup location is required"),
-  ngoPreference: z.string().min(1, "Please select an NGO preference"),
   ngoId: z.string().optional(),
-  itemCondition: z.string().min(1, "Please select item condition"),
+  itemCondition: z.enum(["GOOD", "NORMAL", "BAD"]),
   pickupDate: z.date({
     required_error: "Please select a date",
   }),
@@ -49,19 +52,32 @@ const donationFormSchema = z.object({
   notes: z.string().optional(),
 });
 
-type DonationFormValues = z.infer<typeof donationFormSchema>;
+export type DonationFormValues = z.infer<typeof donationFormSchema>;
 
 const DonationForm = ({ availableNgos }) => {
   const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationFormSchema),
     defaultValues: {
-      donationType: "donation",
+      donationType: "DONATION",
       notes: "",
     },
   });
 
-  function onSubmit(data: DonationFormValues) {
-    console.log(data);
+  async function onSubmit(data: DonationFormValues) {
+    const res = await addDonation(data);
+    if (res) {
+      toast({
+        title: "Donation scheduled",
+        description: "Your donation has been scheduled successfully",
+      });
+      redirect("/user");
+    } else {
+      toast({
+        title: "Error",
+        description: "An error occurred while scheduling your donation",
+        variant: "destructive",
+      });
+    }
   }
   return (
     <Form {...form}>
@@ -79,11 +95,11 @@ const DonationForm = ({ availableNgos }) => {
                   className="flex space-x-4"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="donation" id="donation" />
+                    <RadioGroupItem value="DONATION" id="donation" />
                     <Label htmlFor="donation">Donation</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="disposal" id="disposal" />
+                    <RadioGroupItem value="DISPOSAL" id="disposal" />
                     <Label htmlFor="disposal">Disposal</Label>
                   </div>
                 </RadioGroup>
@@ -120,7 +136,6 @@ const DonationForm = ({ availableNgos }) => {
                     min="1"
                     placeholder="Number of items"
                     {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
                   />
                 </FormControl>
                 <FormMessage />
@@ -143,60 +158,28 @@ const DonationForm = ({ availableNgos }) => {
           )}
         />
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="ngoPreference"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>NGO Preference</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select NGO preference" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="any">Open to any NGO</SelectItem>
-                    <SelectItem value="goodwill">Goodwill</SelectItem>
-                    <SelectItem value="salvation">Salvation Army</SelectItem>
-                    <SelectItem value="redcross">Red Cross</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="itemCondition"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Item Condition</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select condition" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="good">Good</SelectItem>
-                    <SelectItem value="normal">Normal</SelectItem>
-                    <SelectItem value="bad">Bad</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={form.control}
+          name="itemCondition"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Item Condition</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select condition" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="GOOD">Good</SelectItem>
+                  <SelectItem value="NORMAL">Normal</SelectItem>
+                  <SelectItem value="BAD">Bad</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -225,73 +208,79 @@ const DonationForm = ({ availableNgos }) => {
             </FormItem>
           )}
         />
+        <div className="flex w-full justify-between gap-2">
+          <FormField
+            control={form.control}
+            name="pickupDate"
+            render={({ field }) => (
+              <FormItem className="flex w-full flex-col">
+                <FormLabel>Pickup Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground",
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date < new Date()}
+                      // initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="pickupDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Pickup Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+          <FormField
+            control={form.control}
+            name="pickupTime"
+            render={({ field }) => (
+              <FormItem className="flex w-full flex-col">
+                <FormLabel>Preferred Pickup Time</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select preferred time" />
+                    </SelectTrigger>
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date < new Date()}
-                    // initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="pickupTime"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Preferred Pickup Time</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select preferred time" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="morning">
-                    Morning (9 AM - 12 PM)
-                  </SelectItem>
-                  <SelectItem value="afternoon">
-                    Afternoon (12 PM - 4 PM)
-                  </SelectItem>
-                  <SelectItem value="evening">Evening (4 PM - 7 PM)</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <SelectContent>
+                    <SelectItem value="morning">
+                      Morning (9 AM - 12 PM)
+                    </SelectItem>
+                    <SelectItem value="afternoon">
+                      Afternoon (12 PM - 4 PM)
+                    </SelectItem>
+                    <SelectItem value="evening">
+                      Evening (4 PM - 7 PM)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}

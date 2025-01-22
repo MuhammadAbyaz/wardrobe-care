@@ -29,6 +29,20 @@
       "when": 1737570399104,
       "tag": "0003_panoramic_drax",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737578859080,
+      "tag": "0004_colossal_blizzard",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1737579665672,
+      "tag": "0005_dapper_nico_minoru",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "wardrobe-care_donation" DROP COLUMN IF EXISTS "open_to_any_ngo";
