@@ -7,7 +7,7 @@ export default async function SignIn() {
     redirect("/");
   }
   return (
-    <div className="flex min-h-screen items-center">
+    <div className="flex h-full items-center">
       <SignInPage />
     </div>
   );

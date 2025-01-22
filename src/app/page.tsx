@@ -1,37 +1,163 @@
-import Link from "next/link";
+"use client";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Recycle, Gift, Store } from "lucide-react";
+import { motion } from "framer-motion";
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
+    <div className="flex min-h-screen flex-col">
+      <section className="bg-gradient-to-b from-green-50 to-white px-4 py-20 md:px-6 lg:px-8">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-6 text-center"
           >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
+            <h1 className="text-4xl font-bold text-gray-900 md:text-6xl">
+              Give Your Clothes a Second Life
+            </h1>
+            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+              Join our sustainable fashion movement. Donate clothes, earn
+              rewards, and make a positive impact on the environment.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                Get Started
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button size="lg" variant="outline">
+                Learn More
+              </Button>
             </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
-          </Link>
+          </motion.div>
         </div>
+      </section>
+
+      <section className="px-4 py-20 md:px-6 lg:px-8">
+        <div className="container mx-auto max-w-6xl">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center text-3xl font-bold"
+          >
+            How It Works
+          </motion.h2>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <FeatureCard
+              icon={<Recycle className="text-primary h-10 w-10" />}
+              title="Easy Donation Process"
+              description="Schedule pickups or find nearby donation points with just a few clicks."
+            />
+            <FeatureCard
+              icon={<Gift className="text-primary h-10 w-10" />}
+              title="Earn Rewards"
+              description="Get points for every donation and redeem them for exclusive rewards."
+            />
+            <FeatureCard
+              icon={<Store className="text-primary h-10 w-10" />}
+              title="Partner Brands"
+              description="Access special discounts and offers from sustainable fashion brands."
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-gray-50 px-4 py-20 md:px-6 lg:px-8">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-12 text-center"
+          >
+            <h2 className="text-3xl font-bold">Our Impact</h2>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <ImpactStat number="10K+" label="Clothes Donated" />
+              <ImpactStat number="5K+" label="Active Users" />
+              <ImpactStat number="50+" label="Partner Organizations" />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="bg-green-600 px-4 py-20 md:px-6 lg:px-8">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-6 text-center"
+          >
+            <h2 className="text-3xl font-bold text-white">
+              Ready to Make a Difference?
+            </h2>
+            <p className="mx-auto max-w-2xl text-xl text-green-50">
+              Join thousands of others in our mission to reduce textile waste
+              and promote sustainable fashion.
+            </p>
+            <Button size="lg" variant="secondary">
+              Sign Up Now
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.05 }}
+      transition={{ duration: 0.5 }}
+      className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+    >
+      <div className="space-y-4">
+        {icon}
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-gray-600">{description}</p>
       </div>
-    </main>
+    </motion.div>
+  );
+}
+
+function ImpactStat({ number, label }: { number: string; label: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-2"
+    >
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="text-primary text-4xl font-bold"
+      >
+        {number}
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+        className="text-gray-600"
+      >
+        {label}
+      </motion.div>
+    </motion.div>
   );
 }
