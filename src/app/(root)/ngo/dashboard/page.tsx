@@ -48,13 +48,12 @@ const donationsData: DonationData[] = [
     item: "Winter Clothing",
     quantity: 5,
     pickupLocation: "123 Main St, City",
-    itemCondition: "GOOD",
+    itemCondition: "BAD",
     pickupDateTime: new Date("2024-03-20T10:00:00"),
     donationType: "DONATION",
-    status: "COMPLETED",
+    status: "ACCEPTED",
     additionalNotes: "All items are cleaned and packed",
   },
-  // Add more sample data as needed
 ];
 
 const stats = [
@@ -168,10 +167,10 @@ const NgoDonationRequest = () => {
                             <Badge
                               variant={
                                 donation.itemCondition === "GOOD"
-                                  ? "default"
+                                  ? "completed"
                                   : donation.itemCondition === "NORMAL"
-                                    ? "outline"
-                                    : "destructive"
+                                    ? "warning"
+                                    : "rejected"
                               }
                             >
                               {donation.itemCondition}
@@ -185,12 +184,10 @@ const NgoDonationRequest = () => {
                             <Badge
                               variant={
                                 donation.status === "COMPLETED"
-                                  ? "default"
+                                  ? "completed"
                                   : donation.status === "ACCEPTED"
-                                    ? "outline"
-                                    : donation.status === "REJECTED"
-                                      ? "destructive"
-                                      : "secondary"
+                                    ? "accepted"
+                                    : "rejected"
                               }
                             >
                               {donation.status}

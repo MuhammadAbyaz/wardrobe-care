@@ -8,6 +8,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
+        completed: "border-transparent bg-success text-white",
+        accepted: "border-transparent bg-accepted text-white",
+        rejected: "border-transparent bg-rejected text-white",
+        warning: "border-transparent bg-warning text-white",
         default:
           "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
         secondary:
@@ -20,8 +24,8 @@ const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
