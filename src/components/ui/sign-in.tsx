@@ -19,27 +19,21 @@ function SignInPage() {
     <div className="grid w-full grow items-center px-4 sm:justify-center">
       <Card className="w-full sm:w-96">
         <CardHeader>
-          <CardTitle>Sign in to Acme Co</CardTitle>
+          <CardTitle>Sign in to Wardrobe Care</CardTitle>
           <CardDescription>
             Welcome back! Please sign in to continue
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-y-4">
-          <div className="grid grid-cols-2 gap-x-4">
-            <Button size="sm" variant="outline" type="button">
-              <Icons.gitHub className="mr-2 size-4" />
-              GitHub
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              type="button"
-              onClick={signInAction}
-            >
-              <Icons.google className="mr-2 size-4" />
-              Google
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            type="button"
+            onClick={signInAction}
+          >
+            <Icons.google className="mr-2 size-4" />
+            Google
+          </Button>
 
           <p className="text-muted-foreground before:bg-border after:bg-border flex items-center gap-x-3 text-sm before:h-px before:flex-1 after:h-px after:flex-1">
             or

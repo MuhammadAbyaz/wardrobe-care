@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { signOutAction } from "@/server/auth/actions";
+import { type Session } from "next-auth";
 import Link from "next/link";
 
-export default function Navbar() {
+export default async function Navbar({ session }: { session: Session | null }) {
   return (
     <header className="border-b">
       <div className="container mx-auto max-w-6xl px-4 md:px-6 lg:px-8">
@@ -22,14 +24,18 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost">
-              <Link href={"/auth/sign-in"}>Log In</Link>
-            </Button>
-            <Button className="bg-green-600 text-white hover:bg-green-700">
-              Sign Up
-            </Button>
-          </div>
+          {session ? (
+            <Button onClick={signOutAction}>Sign Out</Button>
+          ) : (
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" asChild>
+                <Link href={"/auth/sign-in"}>Log In</Link>
+              </Button>
+              <Button className="bg-green-600 text-white hover:bg-green-700">
+                <Link href={"/auth/sign-up"}>Sign Up</Link>
+              </Button>
+            </div>
+          )}
         </nav>
       </div>
     </header>

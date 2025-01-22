@@ -1,8 +1,11 @@
 "use server";
 
-import { signIn } from ".";
+import { signIn, signOut } from ".";
 
 export const signInAction = async () => {
-  "use server";
   await signIn("google");
+};
+
+export const signOutAction = async () => {
+  await signOut();
 };
