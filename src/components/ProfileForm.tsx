@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +18,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "./ui/checkbox";
 import { Dropzone } from "./Dropzone";
+import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
+import { ngoRegistration } from "@/server/ngo/actions";
+import { redirect } from "next/navigation";
+import { Session } from "next-auth";
 
 const profileFormSchema = z.object({
   contactPerson: z.string().nonempty(),
@@ -38,16 +42,56 @@ const defaultValues: ProfileFormValues = {
   termsAgreement: false,
 };
 
-export function ProfileForm() {
+export function ProfileForm({ session }: { session: Session }) {
   const { toast } = useToast();
+  const supabaseClient = createClient();
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
+  const [taxFile, setTaxFile] = useState<File | null>(null);
+  const [regProofFile, setRegProofFile] = useState<File | null>(null);
 
-  function onSubmit(data: ProfileFormValues) {
-    console.log("submitting");
+  const uploadFile = async ({
+    bucket,
+    file,
+    id,
+  }: {
+    id: string;
+    bucket: string;
+    file: File;
+  }) => {
+    const { data: res, error } = await supabaseClient.storage
+      .from(bucket)
+      .upload(id, file, { cacheControl: "5", upsert: true });
+    return res?.path;
+  };
+
+  async function onSubmit(data: ProfileFormValues) {
+    const TAX_BUCKET = process.env.NEXT_PUBLIC_TAX_BUCKET!;
+    const REG_PROOF_BUCKET = process.env.NEXT_PUBLIC_REG_BUCKET!;
+    const taxFilePath = await uploadFile({
+      bucket: TAX_BUCKET,
+      file: taxFile as File,
+      id: `tax-exemption-certificate-${session?.user.id}`,
+    });
+    const regProofFilePath = await uploadFile({
+      bucket: REG_PROOF_BUCKET!,
+      file: regProofFile as File,
+      id: `reg-proof-${session?.user.id}`,
+    });
+    const formtattedData = { ...data, taxFilePath, regProofFilePath };
+    const res = await ngoRegistration(formtattedData);
+    if (res) {
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "NGO registration successfully",
+      });
+      redirect("/ngo/dashboard");
+    }
     toast({
       title: "You submitted the following values:",
       description: (
@@ -135,8 +179,11 @@ export function ProfileForm() {
         />
         {/* Terms & Conditions Agreement: Acknowledgment of rules for using the platform. */}
         <div className="flex flex-col gap-y-4 md:flex-row md:gap-x-4">
-          <Dropzone heading="Proof Of Registration" />
-          <Dropzone heading="Tax Exemption Certificate" />
+          <Dropzone heading="Proof Of Registration" setFile={setTaxFile} />
+          <Dropzone
+            heading="Tax Exemption Certificate"
+            setFile={setRegProofFile}
+          />
         </div>
         <FormField
           control={form.control}
@@ -163,7 +210,7 @@ export function ProfileForm() {
           )}
         />
         <Button type="submit" className="text-white">
-          Update profile
+          Submit
         </Button>
       </form>
     </Form>

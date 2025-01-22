@@ -6,7 +6,13 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 
-export function Dropzone({ heading }: { heading: string }) {
+export function Dropzone({
+  heading,
+  setFile,
+}: {
+  heading: string;
+  setFile: (file: File) => void;
+}) {
   const {
     previewUrl,
     fileName,
@@ -15,7 +21,9 @@ export function Dropzone({ heading }: { heading: string }) {
     handleFileChange,
     handleRemove,
   } = useImageUpload({
-    onUpload: (url) => console.log("Uploaded image URL:", url),
+    onUpload: (file) => {
+      setFile(file);
+    },
   });
 
   const [isDragging, setIsDragging] = useState(false);
@@ -43,15 +51,8 @@ export function Dropzone({ heading }: { heading: string }) {
       e.stopPropagation();
       setIsDragging(false);
 
-      // const file = e.dataTransfer.files?.[0];
-      // if (file && file.type.startsWith("image/")) {
-      //   const fakeEvent = {
-      //     target: {
-      //       files: [file],
-      //     },
-      //   } as React.ChangeEvent<HTMLInputElement>;
-      //   handleFileChange(fakeEvent);
-      // }
+      const file = e.dataTransfer.files?.[0];
+      setFile(file);
     },
     [handleFileChange],
   );

@@ -15,12 +15,14 @@ import { pgTable, unique, foreignKey } from "drizzle-orm/pg-core";
 export const createTable = pgTableCreator((name) => `wardrobe-care_${name}`);
 
 export const ROLE = pgEnum("role", ["USER", "ADMIN", "NGO"]);
+export const STATUS = pgEnum("status", ["PENDING", "VERIFIED", "IN PROGRESS"]);
 export const wardrobeCareNgo = pgTable(
   "wardrobe-care_ngo",
   {
     createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
+    status: STATUS("status").default("IN PROGRESS"),
     contactPerson: varchar("contact_person").default("").notNull(),
     headOfficeAddress: varchar("head_office_address").notNull(),
     website: varchar("website").notNull(),

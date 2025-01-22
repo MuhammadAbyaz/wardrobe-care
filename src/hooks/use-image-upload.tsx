@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseImageUploadProps {
-  onUpload?: (url: string) => void;
+  onUpload?: (file: File) => void;
 }
 
 export function useImageUpload({ onUpload }: UseImageUploadProps = {}) {
@@ -22,7 +22,7 @@ export function useImageUpload({ onUpload }: UseImageUploadProps = {}) {
         const url = URL.createObjectURL(file);
         setPreviewUrl(url);
         previewRef.current = url;
-        onUpload?.(url);
+        onUpload?.(file);
       }
     },
     [onUpload],
