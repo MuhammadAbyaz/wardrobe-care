@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

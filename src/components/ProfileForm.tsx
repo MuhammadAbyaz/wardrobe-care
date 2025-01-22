@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -40,6 +40,7 @@ const defaultValues: ProfileFormValues = {
 };
 
 export function ProfileForm() {
+  const { toast } = useToast();
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -52,6 +53,7 @@ export function ProfileForm() {
   });
 
   function onSubmit(data: ProfileFormValues) {
+    console.log("submitting");
     toast({
       title: "You submitted the following values:",
       description: (
