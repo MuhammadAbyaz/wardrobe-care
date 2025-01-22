@@ -82,11 +82,12 @@ export function SignupForm() {
         description: "error",
       });
     } else {
+      //   console.log("redirecting");
       redirect("/ngo");
     }
   };
   return (
-    <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+    <div className="mx-auto w-full max-w-md rounded-none bg-white p-4 shadow-input dark:bg-black md:rounded-2xl md:p-8">
       <Card className="w-full sm:w-96">
         <CardHeader>
           <CardTitle>Welcome to Wardrobe Care</CardTitle>
@@ -118,7 +119,7 @@ export function SignupForm() {
                     <Icons.google className="mr-2 size-4" />
                     Google
                   </Button>
-                  <p className="text-muted-foreground before:bg-border after:bg-border my-3 flex items-center gap-x-3 text-sm before:h-px before:flex-1 after:h-px after:flex-1">
+                  <p className="my-3 flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
                     or
                   </p>
                   <Form {...form}>
