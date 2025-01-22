@@ -76,13 +76,16 @@ function SignInPage() {
               variant="outline"
               type="button"
               className="my-3"
-              onClick={signInAction}
+              onClick={async () => {
+                await signInAction();
+                // redirect("/user");
+              }}
             >
               <Icons.google className="mr-2 size-4" />
               Google
             </Button>
 
-            <p className="text-muted-foreground before:bg-border after:bg-border flex items-center gap-x-3 text-sm before:h-px before:flex-1 after:h-px after:flex-1">
+            <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
               or
             </p>
             <Form {...form}>

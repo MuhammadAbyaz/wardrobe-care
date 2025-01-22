@@ -8,13 +8,11 @@ import { hash } from "bcryptjs";
 import { redirect } from "next/navigation";
 
 export const signInAction = async () => {
-  await signIn("google");
-  console.log("redirecting");
-  redirect("/user");
+  await signIn("google", { redirectTo: "/user" });
 };
 
 export const signOutAction = async () => {
-  await signOut();
+  await signOut({ redirectTo: "/" });
 };
 
 export const signInWithCreds = async ({
