@@ -27,7 +27,6 @@ import { auth } from "@/server/auth";
 import { format } from "date-fns";
 import { fetchStats } from "@/server/donation/actions";
 
-
 const stats = [
   {
     title: "Total Donations",
@@ -112,7 +111,17 @@ const DonationHistory = async () => {
                         {stat.change}
                       </span>
                     </div>
-                    <div className="rounded-full p-3">
+                    <div
+                      className={`rounded-full p-3 ${
+                        stat.title === "Total Donations"
+                          ? "bg-blue-50"
+                          : stat.title === "Active Disposals"
+                            ? "bg-purple-100"
+                            : stat.title === "Reward Points"
+                              ? "bg-emerald-100"
+                              : "bg-yellow-100"
+                      }`}
+                    >
                       {stat.title === "Total Donations" && (
                         <Package className="h-5 w-5 text-blue-600" />
                       )}

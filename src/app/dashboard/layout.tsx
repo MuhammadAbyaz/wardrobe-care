@@ -5,7 +5,9 @@ import { auth } from "@/server/auth";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
-  if (!session?.user?.id) redirect("/sign-in");
+  console.log(session?.user);
+  if (!session?.user?.id) redirect("/auth/sign-in");
+  if (session?.user?.role !== "ADMIN") redirect("/");
   return (
     <main className="flex min-h-screen w-full flex-row">
       <Sidebar session={session} />
