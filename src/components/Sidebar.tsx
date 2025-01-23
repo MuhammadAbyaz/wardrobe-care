@@ -15,10 +15,10 @@ const Sidebar = ({ session }: { session: Session }) => {
   return (
     <div className="admin-sidebar">
       <div>
-        <div className="logo">
+        <Link className="logo" href={"/"}>
           <Recycle size={30} className="text-primary" />
           <h1>Wardrobe Care</h1>
-        </div>
+        </Link>
         <div className="mt-10 flex flex-col gap-5">
           {adminSideBarLinks.map((link) => {
             const isSelected =
