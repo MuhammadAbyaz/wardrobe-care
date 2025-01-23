@@ -23,7 +23,15 @@ const AvatarDropDown = ({ session }: { session: Session }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
-          <Link href={role === "NGO" ? "/ngo/dashboard" : "/user"}>
+          <Link
+            href={
+              role === "NGO"
+                ? "/ngo/dashboard"
+                : role === "ADMIN"
+                  ? "/dashboard"
+                  : "/user"
+            }
+          >
             Dashboard
           </Link>
         </DropdownMenuItem>
