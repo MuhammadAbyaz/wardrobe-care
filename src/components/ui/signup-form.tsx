@@ -168,7 +168,11 @@ export function SignupForm() {
                               <FormLabel>Password</FormLabel>
                             </LabelInputContainer>
                             <FormControl>
-                              <Input placeholder="Password" {...field} />
+                              <Input
+                                placeholder="Password"
+                                {...field}
+                                type="password"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
