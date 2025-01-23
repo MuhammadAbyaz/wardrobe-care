@@ -61,9 +61,7 @@ export default {
           500: "#E27233",
           800: "#EF3A4B",
         },
-        blue: {
-          100: "#0089F1",
-        },
+
         light: {
           100: "#D6E0FF",
           200: "#EED1AC",

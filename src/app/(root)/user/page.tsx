@@ -114,7 +114,7 @@ const DonationHistory = async () => {
                     <div
                       className={`rounded-full p-3 ${
                         stat.title === "Total Donations"
-                          ? "bg-blue-50"
+                          ? "bg-blue-100"
                           : stat.title === "Active Disposals"
                             ? "bg-purple-100"
                             : stat.title === "Reward Points"
