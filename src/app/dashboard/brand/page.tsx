@@ -140,7 +140,7 @@ const BrandMgt = () => {
                       View and manage your clothing brand partnerships
                     </CardDescription>
                   </div>
-                  <Button className="px-4 py-2">
+                  <Button className="px-4 py-2 text-white">
                     <Plus className="mr-2 h-4 w-4" />
                     Add New Brand
                   </Button>
@@ -217,7 +217,7 @@ const BrandMgt = () => {
                       Configure and manage your voucher programs
                     </CardDescription>
                   </div>
-                  <Button className="px-4 py-2">
+                  <Button className="px-4 py-2 text-white">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Voucher Type
                   </Button>

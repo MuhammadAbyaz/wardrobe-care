@@ -26,12 +26,12 @@ export default function Home() {
               <Button
                 size="lg"
                 className="bg-green-600 text-white hover:bg-green-700"
+                asChild
               >
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button size="lg" variant="outline">
-                Learn More
+                <Link href="/auth/sign-up">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </div>
           </motion.div>
@@ -101,10 +101,6 @@ export default function Home() {
               Join thousands of others in our mission to reduce textile waste
               and promote sustainable fashion.
             </p>
-            <Button size="lg" variant="secondary">
-              <Link href="/auth/sign-up">Sign Up Now</Link>
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
           </motion.div>
         </div>
       </section>
